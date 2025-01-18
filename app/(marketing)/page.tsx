@@ -1,6 +1,6 @@
-import Navbar from './components/layout/Navbar';
-import Hero from './components/home/Hero';
-import Features from './components/home/Features';
+import Navbar from './_components/Navbar';
+import Hero from './_components/Hero';
+import Features from './_components/Features';
 
 // 主页组件
 export default function Home() {
