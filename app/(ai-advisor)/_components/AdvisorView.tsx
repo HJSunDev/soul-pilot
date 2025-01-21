@@ -5,20 +5,25 @@ import { ViewpointPanel } from './ViewpointPanel';
 import { ScenarioInput } from './ScenarioInput';
 import { AdviceDisplay } from './AdviceDisplay';
 
+// 定义三观数据结构接口
 export interface Viewpoint {
-  title: string;
-  description: string;
-  content: string;
+  title: string;      // 三观类型标题
+  description: string; // 引导性描述
+  content: string;    // 用户输入的内容
 }
 
 export const AdvisorView = () => {
+  // 用户输入的三观内容状态
   const [worldview, setWorldview] = useState<string>('');
   const [lifeview, setLifeview] = useState<string>('');
   const [values, setValues] = useState<string>('');
+  // 用户输入的场景和AI建议状态
   const [scenario, setScenario] = useState<string>('');
   const [advice, setAdvice] = useState<string>('');
+  // 加载状态
   const [isLoading, setIsLoading] = useState(false);
 
+  // 三观配置数据
   const viewpoints: Viewpoint[] = [
     {
       title: '世界观',
@@ -26,7 +31,7 @@ export const AdvisorView = () => {
       content: worldview,
     },
     {
-      title: '人生观',
+      title: '人生观', 
       description: '你认为人生的意义和目标是什么？',
       content: lifeview,
     },
@@ -37,6 +42,7 @@ export const AdvisorView = () => {
     },
   ];
 
+  // 处理三观内容变更
   const handleViewpointChange = (type: string, value: string) => {
     switch (type) {
       case '世界观':
@@ -51,6 +57,7 @@ export const AdvisorView = () => {
     }
   };
 
+  // 处理场景提交,获取AI建议
   const handleScenarioSubmit = async (scenario: string) => {
     setScenario(scenario);
     setIsLoading(true);
