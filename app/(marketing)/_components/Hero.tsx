@@ -1,8 +1,13 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { SignInButton, useUser } from "@clerk/nextjs";
 
 // Hero 部分组件
 const Hero = () => {
+  const { isSignedIn } = useUser();
+
   return (
     <div className="relative isolate min-h-screen flex items-center">
       {/* 背景装饰 */}
@@ -31,13 +36,22 @@ const Hero = () => {
               Soul Pilot 是您的心灵导航仪，帮助您在人生的旅途中找到方向。通过科学的方法和个性化的指导，让每一个人都能找到属于自己的成长道路。
             </p>
             <div className="mt-10 flex items-center gap-x-8">
-              <Link
-                href="/advisor"
-                className="relative inline-flex items-center justify-center px-8 py-3 text-base font-medium text-white bg-indigo-600 rounded-full overflow-hidden shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                <span className="relative z-10">开始探索</span>
-                <div className="absolute inset-0 -z-10 bg-gradient-to-r from-indigo-600 to-indigo-700 opacity-80"></div>
-              </Link>
+              {isSignedIn ? (
+                <Link
+                  href="/advisor"
+                  className="relative inline-flex items-center justify-center px-8 py-3 text-base font-medium text-white bg-indigo-600 rounded-full overflow-hidden shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  <span className="relative z-10">开始探索</span>
+                  <div className="absolute inset-0 -z-10 bg-gradient-to-r from-indigo-600 to-indigo-700 opacity-80"></div>
+                </Link>
+              ) : (
+                <SignInButton mode="modal">
+                  <button className="relative inline-flex items-center justify-center px-8 py-3 text-base font-medium text-white bg-indigo-600 rounded-full overflow-hidden shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <span className="relative z-10">开始探索</span>
+                    <div className="absolute inset-0 -z-10 bg-gradient-to-r from-indigo-600 to-indigo-700 opacity-80"></div>
+                  </button>
+                </SignInButton>
+              )}
               <Link 
                 href="#features" 
                 className="group text-base font-semibold leading-7 text-gray-900 flex items-center gap-x-2 transition-all duration-300 hover:gap-x-3"
