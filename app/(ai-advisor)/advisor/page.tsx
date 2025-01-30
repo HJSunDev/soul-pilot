@@ -2,8 +2,45 @@
 
 import { AdvisorView } from '../_components/AdvisorView';
 import Link from 'next/link';
+import { useState, useCallback } from 'react';
+
+// 定义功能模块数据
+const modules = [
+  {
+    id: 'ai-advisor',
+    name: 'AI 导航',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
+      </svg>
+    ),
+    href: '/advisor',
+    active: true
+  },
+  {
+    id: 'emotion-archive',
+    name: '情绪档案',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+      </svg>
+    ),
+    href: '/emotion-archive'
+  }
+];
 
 export default function AdvisorPage() {
+  const [isNavExpanded, setIsNavExpanded] = useState(false);
+
+  // 使用 useCallback 优化性能
+  const handleMouseEnter = useCallback(() => {
+    setIsNavExpanded(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsNavExpanded(false);
+  }, []);
+
   return (
     // 页面容器，设置背景渐变
     <div className="min-h-screen bg-gradient-to-b from-white to-indigo-50/30">
@@ -45,6 +82,38 @@ export default function AdvisorPage() {
           />
         </Link>
       </div>
+
+      {/* 侧边导航栏 */}
+      <nav 
+        className={`fixed left-6 top-1/2 -translate-y-1/2 z-40 transition-all duration-300 ease-in-out ${isNavExpanded ? 'w-48' : 'w-14 hover:w-48'}`}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg ring-1 ring-gray-900/5 p-2">
+          {/* 导航链接 */}
+          <div className="space-y-1">
+            {modules.map((module) => (
+              <Link
+                key={module.id}
+                href={module.href}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group
+                  ${module.active
+                    ? 'text-indigo-600 bg-indigo-50'
+                    : 'text-gray-600 hover:text-indigo-600 hover:bg-indigo-50/50'
+                  }
+                `}
+              >
+                <span className="flex-shrink-0 transition-transform duration-200 group-hover:scale-110">
+                  {module.icon}
+                </span>
+                <span className={`text-sm font-medium truncate transition-opacity duration-200 ${isNavExpanded ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                  {module.name}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </nav>
 
       <div
         // 内容容器，设置最大宽度和内边距
