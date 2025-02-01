@@ -34,50 +34,50 @@ const Features = () => {
   ];
 
   return (
-    <div className="relative py-24 sm:py-32 overflow-hidden">
+    <div className="relative h-screen flex items-center overflow-hidden">
       {/* 背景装饰 */}
       <div className="absolute -top-24 right-0 -z-10 transform-gpu blur-3xl" aria-hidden="true">
         <div className="aspect-[1155/678] w-[72.1875rem] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20" />
       </div>
 
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl px-6 lg:px-8 pt-14">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-base font-semibold leading-7 text-indigo-600">更快成长</h2>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <h2 className="text-sm font-semibold leading-7 text-indigo-600">更快成长</h2>
+          <p className="mt-2 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
             一切你需要的成长助手
           </p>
-          <p className="mt-6 text-lg leading-8 text-gray-600">
+          <p className="mt-4 text-base leading-7 text-gray-600">
             Soul Pilot 集成了多种先进工具和方法，助您在人生道路上披荆斩棘，实现自我提升。
           </p>
         </div>
 
-        <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
-          <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
+        <div className="mx-auto mt-12 max-w-2xl sm:mt-16 lg:mt-16 lg:max-w-none">
+          <dl className="grid max-w-xl grid-cols-1 gap-x-6 gap-y-8 lg:max-w-none lg:grid-cols-3">
             {features.map((feature) => (
               <div 
                 key={feature.title} 
-                className="relative group hover:scale-105 transition-transform duration-300"
+                className="relative group hover:scale-[1.02] transition-transform duration-300"
               >
                 {/* 特性卡片 */}
-                <div className="relative overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-900/5">
+                <div className="relative overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-gray-900/5">
                   {/* 渐变背景 */}
                   <div className="absolute inset-0 -z-10">
                     <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-[0.07] group-hover:opacity-[0.1] transition-opacity duration-300`} />
                   </div>
 
-                  <div className="p-8">
+                  <div className="p-6">
                     {/* 图标 */}
-                    <div className="mb-6">
-                      <div className={`inline-flex items-center justify-center rounded-lg bg-gradient-to-br ${feature.gradient} p-3 text-white shadow-lg`}>
+                    <div className="mb-4">
+                      <div className={`inline-flex items-center justify-center rounded-lg bg-gradient-to-br ${feature.gradient} p-2.5 text-white shadow-md`}>
                         {feature.icon}
                       </div>
                     </div>
 
                     {/* 标题和描述 */}
-                    <dt className="text-xl font-semibold leading-7 text-gray-900 mb-3">
+                    <dt className="text-lg font-semibold leading-7 text-gray-900 mb-2">
                       {feature.title}
                     </dt>
-                    <dd className="text-base leading-7 text-gray-600">
+                    <dd className="text-sm leading-6 text-gray-600">
                       {feature.description}
                     </dd>
                   </div>

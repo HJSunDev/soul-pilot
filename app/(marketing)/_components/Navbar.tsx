@@ -9,11 +9,11 @@ const Navbar = () => {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="flex justify-between items-center h-14">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
               Soul Pilot
             </span>
           </Link>
@@ -23,12 +23,12 @@ const Navbar = () => {
             {!isSignedIn ? (
               <div className="flex items-center space-x-2">
                 <SignInButton mode="modal">
-                  <button className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-indigo-600 transition-all duration-300">
+                  <button className="px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-indigo-600 transition-all duration-300">
                     Sign in
                   </button>
                 </SignInButton>
                 <SignUpButton mode="modal">
-                  <button className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full hover:shadow-lg hover:shadow-indigo-500/30 transition-all duration-300">
+                  <button className="px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full hover:shadow-lg hover:shadow-indigo-500/30 transition-all duration-300">
                     Sign up
                   </button>
                 </SignUpButton>
@@ -37,7 +37,7 @@ const Navbar = () => {
               <UserButton
                 appearance={{
                   elements: {
-                    avatarBox: "w-9 h-9",
+                    avatarBox: "w-8 h-8",
                     userButtonPopoverCard: "shadow-lg",
                     userButtonPopoverFooter: "hidden"
                   }

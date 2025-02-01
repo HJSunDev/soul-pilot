@@ -59,15 +59,15 @@ export default function AdvisorPage() {
     // 页面容器：设置最小高度和渐变背景
     <div className="min-h-screen bg-gradient-to-b from-white to-indigo-50/30">
       {/* 返回主页按钮：固定在左上角 */}
-      <div className="fixed top-6 left-6 z-50">
+      <div className="fixed top-5 left-5 z-50">
         <Link
           href="/"
           // 按钮样式：半透明背景、阴影效果和悬停动画
-          className="group relative flex items-center gap-2 rounded-full bg-white/90 pl-3 pr-4 py-2 shadow-lg ring-1 ring-gray-900/5 backdrop-blur-md transition-all duration-300 hover:bg-white hover:shadow-indigo-200/50 hover:-translate-y-0.5"
+          className="group relative flex items-center gap-2 rounded-full bg-white/90 pl-2.5 pr-3.5 py-1.5 shadow-md ring-1 ring-gray-900/5 backdrop-blur-md transition-all duration-300 hover:bg-white hover:shadow-indigo-200/50 hover:-translate-y-0.5"
         >
           {/* 返回箭头图标：带旋转动画 */}
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-600/10 text-indigo-600 transition-transform duration-300 group-hover:-rotate-12">
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600/10 text-indigo-600 transition-transform duration-300 group-hover:-rotate-12">
+            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
             </svg>
           </span>
@@ -79,12 +79,12 @@ export default function AdvisorPage() {
 
       {/* 侧边导航栏：固定在左侧中间位置 */}
       <nav 
-        className={`fixed left-6 top-1/2 -translate-y-1/2 z-40 transition-all duration-300 ease-in-out ${isNavExpanded ? 'w-48' : 'w-14'}`}
+        className={`fixed left-5 top-1/2 -translate-y-1/2 z-40 transition-all duration-300 ease-in-out ${isNavExpanded ? 'w-40' : 'w-12'}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
         {/* 导航栏容器：半透明背景和模糊效果 */}
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg ring-1 ring-gray-900/5 p-2">
+        <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-md ring-1 ring-gray-900/5 p-1.5">
           {/* 导航链接列表 */}
           <div className="space-y-1">
             {modules.map((module) => (
@@ -92,7 +92,7 @@ export default function AdvisorPage() {
                 key={module.id}
                 href={module.href}
                 // 链接样式：根据激活状态显示不同样式
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group
+                className={`flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-all duration-200 group
                   ${module.active
                     ? 'text-indigo-600 bg-indigo-50'
                     : 'text-gray-600 hover:text-indigo-600 hover:bg-indigo-50/50'
@@ -114,14 +114,14 @@ export default function AdvisorPage() {
       </nav>
 
       {/* 主要内容区域 */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* 页面标题和描述 */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
+        <div className="text-center mb-12">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl md:text-5xl">
             <span className="block">心灵导航</span>
             <span className="block text-indigo-600 mt-2">找到属于你的答案</span>
           </h1>
-          <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+          <p className="mt-3 max-w-2xl mx-auto text-base text-gray-500 sm:text-lg md:mt-4">
             通过了解你的三观与当前处境，为你提供量身定制的建议和指导。
           </p>
         </div>

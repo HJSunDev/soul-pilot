@@ -5,10 +5,14 @@ import Features from './_components/Features';
 // 主页组件
 export default function Home() {
   return (
-    <main className="min-h-screen">
+    <main className="relative snap-y snap-mandatory h-screen overflow-y-auto overflow-x-hidden scroll-smooth">
       <Navbar />
-      <Hero />
-      <Features />
+      <section className="snap-start">
+        <Hero />
+      </section>
+      <section className="snap-start">
+        <Features />
+      </section>
     </main>
   );
 }
