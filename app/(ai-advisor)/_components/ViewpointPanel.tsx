@@ -80,8 +80,13 @@ export const ViewpointPanel = ({
           placeholder="请输入你的想法..."
           className="w-full h-32 p-3 text-sm text-gray-700 bg-white/50 
             border border-gray-200 rounded-lg resize-none
-            focus:ring-2 focus:ring-indigo-500/50 focus:border-transparent
-            transition-all duration-300"
+            transition-all duration-200 ease-in-out
+            placeholder:text-gray-400
+            hover:border-gray-300
+            focus:border-indigo-300 
+            focus:ring-2 focus:ring-indigo-200/50 
+            focus:bg-white
+            focus:shadow-[0_2px_12px_rgba(99,102,241,0.12)]"
         />
       </div>
     </div>

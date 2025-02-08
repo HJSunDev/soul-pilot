@@ -73,7 +73,7 @@ export const AdvisorView = () => {
   return (
     <div className="space-y-8">
       {/* 三观输入区域 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
         {viewpoints.map((viewpoint) => (
           <ViewpointPanel
             key={viewpoint.title}

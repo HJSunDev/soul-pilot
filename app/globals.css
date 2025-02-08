@@ -132,3 +132,41 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* 更全面的输入元素默认样式重置 */
+textarea,
+input,
+select,
+button {
+  outline: none !important;  /* 使用!important确保覆盖浏览器默认样式 */
+  -webkit-appearance: none;  /* 移除Webkit浏览器的默认样式 */
+  -moz-appearance: none;     /* 移除Firefox的默认样式 */
+  appearance: none;          /* 标准写法 */
+}
+
+/* 处理Firefox特定的聚焦样式 */
+textarea::-moz-focus-inner,
+input::-moz-focus-inner,
+select::-moz-focus-inner,
+button::-moz-focus-inner {
+  border: 0;
+}
+
+/* 确保在所有状态下都不显示outline */
+textarea:focus,
+input:focus,
+select:focus,
+button:focus {
+  outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 移除Safari和Chrome的默认外观 */
+textarea,
+input,
+select,
+button {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

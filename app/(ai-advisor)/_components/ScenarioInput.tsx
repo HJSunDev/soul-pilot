@@ -32,7 +32,15 @@ export const ScenarioInput = ({ onSubmit }: ScenarioInputProps) => {
         <div className="space-y-4">
           {/* 场景输入文本框 */}
           <textarea
-            className="w-full h-48 p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+            className="w-full h-48 p-4 text-sm text-gray-700 bg-white/50 
+              border border-gray-200 rounded-lg resize-none
+              transition-all duration-200 ease-in-out
+              placeholder:text-gray-400
+              hover:border-gray-300
+              focus:border-indigo-300 
+              focus:ring-2 focus:ring-indigo-200/50 
+              focus:bg-white
+              focus:shadow-[0_2px_12px_rgba(99,102,241,0.12)]"
             placeholder="请详细描述你当前遇到的情况或困扰..."
             value={scenario}
             onChange={(e) => setScenario(e.target.value)}
