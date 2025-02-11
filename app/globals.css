@@ -95,6 +95,25 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+
+    /* 字体大小变量 */
+    --font-size-xs: 0.75rem;    /* 12px at 16px base */
+    --font-size-sm: 0.875rem;   /* 14px at 16px base */
+    --font-size-base: 1rem;     /* 16px at 16px base */
+    --font-size-lg: 1.125rem;   /* 18px at 16px base */
+    --font-size-xl: 1.25rem;    /* 20px at 16px base */
+    --font-size-2xl: 1.5rem;    /* 24px at 16px base */
+    --font-size-3xl: 1.875rem;  /* 30px at 16px base */
+    --font-size-4xl: 2.25rem;   /* 36px at 16px base */
+    --font-size-5xl: 3rem;      /* 48px at 16px base */
+
+    /* 行高变量 */
+    --line-height-tight: 1.25;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.75;
+
+    /* 默认字体大小（用于服务端渲染和 JS 加载前） */
+    font-size: 16px;
   }
   .dark {
     --background: 0 0% 3.9%;
