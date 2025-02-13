@@ -72,10 +72,15 @@ export const AdviceDisplay = ({
         <div className="flex-1 flex flex-col items-center justify-center">
           {/* 加载动画容器 */}
           <div className="relative mb-4">
-            <div className="w-16 h-16 rounded-full border-[3px] border-indigo-100 
-              border-t-indigo-500 animate-spin"></div>
-            <div className="absolute inset-0 w-16 h-16 rounded-full border-[3px] 
-              border-purple-100 border-r-purple-500 animate-spin-reverse"></div>
+            {/* 外层渐变光环 */}
+            <div className="absolute -inset-2 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-full blur-lg opacity-50 animate-pulse"/>
+            {/* 主要加载动画 */}
+            <div className="w-16 h-16 rounded-full border-[3px] border-gray-100 
+              border-t-indigo-500 border-r-purple-500 animate-[spin_1s_linear_infinite] 
+              relative">
+              {/* 内部装饰圆环 */}
+              <div className="absolute inset-[3px] rounded-full border-2 border-gray-50/50"/>
+            </div>
           </div>
           <p className="text-sm font-medium text-gray-500/90 animate-pulse">
             AI 正在思考中...
