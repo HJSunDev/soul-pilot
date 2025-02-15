@@ -12,7 +12,7 @@ const Hero = () => {
     <div className="relative isolate h-screen flex items-center">
       {/* 背景装饰 */}
       <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
-        <div className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" />
+        <div className="relative left-[calc(50%-11rem)] aspect-1155/678 w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-linear-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" />
       </div>
 
       <div className="mx-auto max-w-6xl px-6 lg:px-8 pt-14">
@@ -36,16 +36,16 @@ const Hero = () => {
               {isSignedIn ? (
                 <Link
                   href="/advisor"
-                  className="relative inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-full overflow-hidden shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="relative inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-full overflow-hidden shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/30 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                   <span className="relative z-10">开始探索</span>
-                  <div className="absolute inset-0 -z-10 bg-gradient-to-r from-indigo-600 to-indigo-700 opacity-80"></div>
+                  <div className="absolute inset-0 -z-10 bg-linear-to-r from-indigo-600 to-indigo-700 opacity-80"></div>
                 </Link>
               ) : (
                 <SignInButton mode="modal">
-                  <button className="relative inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-full overflow-hidden shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                  <button className="relative inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-full overflow-hidden shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/30 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     <span className="relative z-10">开始探索</span>
-                    <div className="absolute inset-0 -z-10 bg-gradient-to-r from-indigo-600 to-indigo-700 opacity-80"></div>
+                    <div className="absolute inset-0 -z-10 bg-linear-to-r from-indigo-600 to-indigo-700 opacity-80"></div>
                   </button>
                 </SignInButton>
               )}
@@ -67,9 +67,9 @@ const Hero = () => {
               <div className="absolute -top-4 -right-4 w-64 h-64 bg-indigo-50 rounded-full mix-blend-multiply blur-2xl opacity-70"></div>
               <div className="absolute -bottom-4 -left-4 w-64 h-64 bg-pink-50 rounded-full mix-blend-multiply blur-2xl opacity-70"></div>
               <div className="relative">
-                <div className="aspect-[4/3] w-full rounded-2xl bg-gradient-to-br from-indigo-50 to-white p-6 shadow-2xl ring-1 ring-gray-900/10">
+                <div className="aspect-4/3 w-full rounded-2xl bg-linear-to-br from-indigo-50 to-white p-6 shadow-2xl ring-1 ring-gray-900/10">
                   <div className="absolute inset-0 bg-grid-slate-100/[0.05] [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] rounded-2xl"></div>
-                  <div className="h-full w-full rounded-xl bg-gradient-to-br from-indigo-100/40 to-white/80 p-4 flex flex-col justify-between backdrop-blur-sm">
+                  <div className="h-full w-full rounded-xl bg-linear-to-br from-indigo-100/40 to-white/80 p-4 flex flex-col justify-between backdrop-blur-xs">
                     <div className="flex items-center gap-3">
                       <div className="h-2.5 w-2.5 rounded-full bg-indigo-500"></div>
                       <div className="h-2.5 w-16 rounded-full bg-indigo-100"></div>
@@ -87,7 +87,7 @@ const Hero = () => {
       </div>
 
       <div className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
-        <div className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#9089fc] to-[#ff80b5] opacity-20 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" />
+        <div className="relative left-[calc(50%+3rem)] aspect-1155/678 w-[36.125rem] -translate-x-1/2 bg-linear-to-tr from-[#9089fc] to-[#ff80b5] opacity-20 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" />
       </div>
     </div>
   );

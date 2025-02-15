@@ -22,13 +22,13 @@ export const ScenarioInput = ({ onSubmit }: ScenarioInputProps) => {
 
   return (
     // 主容器：采用渐变背景和精致的阴影效果
-    <div className="bg-gradient-to-br from-white to-gray-50/80 rounded-2xl 
+    <div className="bg-linear-to-br from-white to-gray-50/80 rounded-2xl 
       shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] ring-1 ring-gray-900/5 
       p-6 h-[20rem] flex flex-col">
       {/* 标题区域：添加优雅的装饰元素 */}
       <div className="flex items-center space-x-3 mb-4">
-        <div className="w-1.5 h-6 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-full"/>
-        <h3 className="text-xl font-semibold bg-gradient-to-r from-gray-800 to-gray-600 
+        <div className="w-1.5 h-6 bg-linear-to-b from-indigo-500 to-purple-500 rounded-full"/>
+        <h3 className="text-xl font-semibold bg-linear-to-r from-gray-800 to-gray-600 
           bg-clip-text text-transparent">
           描述你的场景
         </h3>
@@ -40,7 +40,7 @@ export const ScenarioInput = ({ onSubmit }: ScenarioInputProps) => {
         <div className="flex-1">
           <textarea
             className="w-full h-full p-4 text-[15px] leading-relaxed text-gray-700 
-              bg-white/70 backdrop-blur-sm
+              bg-white/70 backdrop-blur-xs
               border border-gray-200/80 rounded-xl
               transition-all duration-300 ease-out
               placeholder:text-gray-400/90
@@ -75,7 +75,7 @@ export const ScenarioInput = ({ onSubmit }: ScenarioInputProps) => {
               h-11 w-full rounded-xl font-medium text-[15px]
               transition-all duration-300 transform
               ${scenario.trim() 
-                ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white ' +
+                ? 'bg-linear-to-r from-indigo-500 to-purple-500 text-white ' +
                   'hover:shadow-lg hover:shadow-indigo-500/25 hover:scale-[1.02] ' +
                   'active:scale-[0.98]'
                 : 'bg-gray-100 text-gray-400 cursor-not-allowed'

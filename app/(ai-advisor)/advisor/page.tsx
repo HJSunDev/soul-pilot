@@ -57,7 +57,7 @@ export default function AdvisorPage() {
 
   return (
     // 页面容器：设置最小高度和渐变背景
-    <div className="flex flex-col h-screen bg-gradient-to-b from-white to-indigo-50/30">
+    <div className="flex flex-col h-screen bg-linear-to-b from-white to-indigo-50/30">
 
       {/* 主要内容区域 */}
       <div className="h-full w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col justify-center">
@@ -91,7 +91,7 @@ export default function AdvisorPage() {
           </span>
           <span className="text-sm font-medium text-gray-900">返回主页</span>
           {/* 底部装饰线：悬停时显示 */}
-          <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-indigo-500/0 via-indigo-500/70 to-indigo-500/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+          <div className="absolute inset-x-0 -bottom-px h-px bg-linear-to-r from-indigo-500/0 via-indigo-500/70 to-indigo-500/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
         </Link>
       </div>
 
@@ -118,7 +118,7 @@ export default function AdvisorPage() {
                 `}
               >
                 {/* 图标：悬停时缩放效果 */}
-                <span className="flex-shrink-0 transition-transform duration-200 group-hover:scale-110">
+                <span className="shrink-0 transition-transform duration-200 group-hover:scale-110">
                   {module.icon}
                 </span>
                 {/* 文字：导航栏展开时显示 */}

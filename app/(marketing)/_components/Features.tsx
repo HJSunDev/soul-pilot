@@ -37,7 +37,7 @@ const Features = () => {
     <div className="relative h-screen flex items-center overflow-hidden">
       {/* 背景装饰 */}
       <div className="absolute -top-24 right-0 -z-10 transform-gpu blur-3xl" aria-hidden="true">
-        <div className="aspect-[1155/678] w-[72.1875rem] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20" />
+        <div className="aspect-1155/678 w-[72.1875rem] bg-linear-to-tr from-[#ff80b5] to-[#9089fc] opacity-20" />
       </div>
 
       <div className="mx-auto max-w-6xl px-6 lg:px-8 pt-14">
@@ -62,13 +62,13 @@ const Features = () => {
                 <div className="relative overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-gray-900/5">
                   {/* 渐变背景 */}
                   <div className="absolute inset-0 -z-10">
-                    <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-[0.07] group-hover:opacity-[0.1] transition-opacity duration-300`} />
+                    <div className={`absolute inset-0 bg-linear-to-br ${feature.gradient} opacity-[0.07] group-hover:opacity-[0.1] transition-opacity duration-300`} />
                   </div>
 
                   <div className="p-6">
                     {/* 图标 */}
                     <div className="mb-4">
-                      <div className={`inline-flex items-center justify-center rounded-lg bg-gradient-to-br ${feature.gradient} p-2.5 text-white shadow-md`}>
+                      <div className={`inline-flex items-center justify-center rounded-lg bg-linear-to-br ${feature.gradient} p-2.5 text-white shadow-md`}>
                         {feature.icon}
                       </div>
                     </div>

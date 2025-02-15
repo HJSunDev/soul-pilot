@@ -26,7 +26,7 @@ export const ViewpointPanel = ({
   return (
     <div 
       className={`
-        bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6
+        bg-white/80 backdrop-blur-xs rounded-xl shadow-lg p-6
         transition-all duration-300
         ${isActive ? 'ring-2 ring-indigo-500/50 shadow-indigo-100' : ''}
       `}

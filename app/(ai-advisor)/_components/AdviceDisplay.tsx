@@ -26,13 +26,13 @@ export const AdviceDisplay = ({
 
   return (
     // 主容器：采用与ScenarioInput一致的渐变背景和阴影效果
-    <div className="bg-gradient-to-br from-white to-gray-50/80 rounded-2xl 
+    <div className="bg-linear-to-br from-white to-gray-50/80 rounded-2xl 
       shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] ring-1 ring-gray-900/5 
       p-6 h-[20rem] flex flex-col">
       {/* 标题区域：保持视觉一致性 */}
       <div className="flex items-center space-x-3 mb-4">
-        <div className="w-1.5 h-6 bg-gradient-to-b from-purple-500 to-indigo-500 rounded-full"/>
-        <h3 className="text-xl font-semibold bg-gradient-to-r from-gray-800 to-gray-600 
+        <div className="w-1.5 h-6 bg-linear-to-b from-purple-500 to-indigo-500 rounded-full"/>
+        <h3 className="text-xl font-semibold bg-linear-to-r from-gray-800 to-gray-600 
           bg-clip-text text-transparent">
           AI 建议
         </h3>
@@ -42,7 +42,7 @@ export const AdviceDisplay = ({
         // 初始状态：优化空状态设计
         <div className="flex-1 flex flex-col items-center justify-center text-center">
           {/* 图标容器：改进视觉效果 */}
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-50 to-purple-50 
+          <div className="w-16 h-16 rounded-full bg-linear-to-br from-indigo-50 to-purple-50 
             flex items-center justify-center mb-4 shadow-inner">
             <svg
               className="w-8 h-8 text-indigo-500"
@@ -59,7 +59,7 @@ export const AdviceDisplay = ({
             </svg>
           </div>
           {/* 提示文本：优化排版 */}
-          <h4 className="text-lg font-medium bg-gradient-to-r from-gray-800 to-gray-600 
+          <h4 className="text-lg font-medium bg-linear-to-r from-gray-800 to-gray-600 
             bg-clip-text text-transparent mb-3">
             等待你的输入
           </h4>
@@ -73,7 +73,7 @@ export const AdviceDisplay = ({
           {/* 加载动画容器 */}
           <div className="relative mb-4">
             {/* 外层渐变光环 */}
-            <div className="absolute -inset-2 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-full blur-lg opacity-50 animate-pulse"/>
+            <div className="absolute -inset-2 bg-linear-to-r from-indigo-100 to-purple-100 rounded-full blur-lg opacity-50 animate-pulse"/>
             {/* 主要加载动画 */}
             <div className="w-16 h-16 rounded-full border-[3px] border-gray-100 
               border-t-indigo-500 border-r-purple-500 animate-[spin_1s_linear_infinite] 
@@ -92,8 +92,8 @@ export const AdviceDisplay = ({
           {/* 建议内容区域：改进视觉效果 */}
           <div className="flex-1 overflow-auto scrollbar-thin scrollbar-thumb-gray-200 
             scrollbar-track-transparent hover:scrollbar-thumb-gray-300">
-            <div className="p-4 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 
-              backdrop-blur-sm rounded-xl border border-indigo-100/30">
+            <div className="p-4 bg-linear-to-br from-indigo-50/50 to-purple-50/50 
+              backdrop-blur-xs rounded-xl border border-indigo-100/30">
               <p className="text-[15px] leading-relaxed text-gray-700 whitespace-pre-line">
                 {advice}
               </p>
@@ -142,7 +142,7 @@ export const AdviceDisplay = ({
         // 准备状态：优化视觉效果
         <div className="flex-1 flex flex-col items-center justify-center text-center">
           {/* 图标容器 */}
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-50 to-purple-50 
+          <div className="w-16 h-16 rounded-full bg-linear-to-br from-indigo-50 to-purple-50 
             flex items-center justify-center mb-4 shadow-inner">
             <svg
               className="w-8 h-8 text-indigo-500"
@@ -159,7 +159,7 @@ export const AdviceDisplay = ({
             </svg>
           </div>
           {/* 提示文本 */}
-          <h4 className="text-lg font-medium bg-gradient-to-r from-gray-800 to-gray-600 
+          <h4 className="text-lg font-medium bg-linear-to-r from-gray-800 to-gray-600 
             bg-clip-text text-transparent mb-3">
             准备就绪
           </h4>
