@@ -2,7 +2,10 @@
 
 import Link from 'next/link';
 import { useState, useCallback } from 'react';
-import { EmotionArchiveView } from '../_components/EmotionArchiveView';
+import { EmotionRecorder } from '../_components/EmotionRecorder';
+import { EmotionAnalytics } from '../_components/EmotionAnalytics';
+import { EmotionAIAnalysis } from '../_components/EmotionAIAnalysis';
+import { EmotionHistory } from '../_components/EmotionHistory';
 
 // 定义导航模块数据
 const modules = [
@@ -54,20 +57,43 @@ export default function EmotionArchivePage() {
   return (
     <div className="flex flex-col h-screen bg-gradient-to-b from-white to-rose-50/30">
       {/* 主要内容区域 */}
-      <div className="h-full w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col justify-center">
-        {/* 页面标题和描述 */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl md:text-4xl">
-            <span className="block">情绪档案</span>
-            <span className="block text-rose-600 mt-2">记录你的心路历程</span>
-          </h1>
-          <p className="mt-3 max-w-2xl mx-auto text-base text-gray-500 sm:text-lg md:mt-4">
-            通过记录和分析你的情绪变化，帮助你更好地理解自己，实现情绪的良性循环。
-          </p>
-        </div>
+      <div className="h-full w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="h-full grid grid-cols-12 gap-4">
+          {/* 左侧：情绪记录和AI分析 */}
+          <div className="col-span-7 h-full grid grid-rows-2 gap-4">
+            {/* 情绪记录区域 */}
+            <div className="row-span-1 bg-white/60 backdrop-blur-md shadow-sm rounded-3xl border-none overflow-hidden">
+              <EmotionRecorder />
+            </div>
+            {/* AI分析区域 */}
+            <div className="row-span-1 bg-white/60 backdrop-blur-md shadow-sm rounded-3xl border-none overflow-hidden">
+              <EmotionAIAnalysis />
+            </div>
+          </div>
 
-        {/* 核心功能组件 */}
-        <EmotionArchiveView />
+          {/* 右侧：日历和历史记录 */}
+          <div className="col-span-5 h-full grid grid-rows-6 gap-4">
+            {/* 日历区域 */}
+            <div className="row-span-1 bg-white/60 backdrop-blur-md shadow-sm rounded-3xl border-none overflow-hidden">
+              {/* 日历组件占位 */}
+              <div className="h-full p-3 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="relative w-8 h-8 mx-auto">
+                    <svg className="absolute inset-0 text-rose-200 animate-pulse" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                    </svg>
+                  </div>
+                  <p className="mt-1 text-xs text-gray-500">日历视图开发中</p>
+                </div>
+              </div>
+            </div>
+
+            {/* 历史记录区域 */}
+            <div className="row-span-5 bg-white/60 backdrop-blur-md shadow-sm rounded-3xl border-none overflow-hidden">
+              <EmotionHistory />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* 返回主页按钮 */}
