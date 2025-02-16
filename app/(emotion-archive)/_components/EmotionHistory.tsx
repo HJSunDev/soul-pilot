@@ -3,92 +3,99 @@
 import { useState } from 'react';
 import { CardContent } from '@/components/ui/card';
 
+// 定义情绪类型及其对应的渐变色
+const emotionGradients = {
+  joy: 'from-amber-100 via-amber-50 to-transparent',
+  calm: 'from-emerald-100 via-emerald-50 to-transparent',
+  sad: 'from-purple-100 via-purple-50 to-transparent',
+  anxiety: 'from-pink-100 via-pink-50 to-transparent'
+} as const;
+
 // 模拟历史数据
 const mockHistoryData = [
   {
     id: '1',
-    date: '2024-03-10',
+    date: '今天',
     time: '14:30',
-    emotion: { type: 'joy', name: '喜悦', icon: '😊' },
-    intensity: 85,
-    content: '今天的项目演示非常成功，团队的努力得到了认可，感到很欣慰。主管的积极反馈让我对未来更有信心。',
-    analysis: '情绪积极，展现出良好的团队协作能力和职业成就感。建议继续保持这种积极的工作态度。',
+    emotion: { type: 'joy', name: '愉悦', icon: '😊', intensity: 85 },
+    content: '今天的项目演示非常成功，团队的努力得到了认可，感到很欣慰。',
   },
   {
     id: '2',
-    date: '2024-03-09',
+    date: '昨天',
     time: '20:15',
-    emotion: { type: 'sadness', name: '悲伤', icon: '😢' },
-    intensity: 60,
-    content: '和好友谈心，聊到一些过去的遗憾。虽然有些感伤，但也让我更清楚地认识到自己想要的是什么。',
-    analysis: '通过情感交流进行自我反思，这是个健康的过程。建议将这些思考转化为具体的行动计划。',
+    emotion: { type: 'sad', name: '低落', icon: '😢', intensity: 60 },
+    content: '和好友谈心，聊到一些过去的遗憾。',
   },
   {
     id: '3',
-    date: '2024-03-08',
+    date: '前天',
     time: '09:45',
-    emotion: { type: 'anger', name: '愤怒', icon: '😠' },
-    intensity: 75,
-    content: '早会上的分歧让我很烦躁，感觉自己的观点没有得到充分理解。需要学会更好地表达和沟通。',
-    analysis: '工作中的冲突常见，关键是要保持理性和建设性的态度。建议学习一些有效的沟通技巧。',
+    emotion: { type: 'anxiety', name: '焦虑', icon: '😰', intensity: 75 },
+    content: '早会上的分歧让我很烦躁。',
+  },
+  {
+    id: '4',
+    date: '3天前',
+    time: '15:20',
+    emotion: { type: 'calm', name: '平静', icon: '😌', intensity: 90 },
+    content: '午后的阳光很温暖。',
   }
 ];
 
 export function EmotionHistory() {
-  const [selectedEntry, setSelectedEntry] = useState<string | null>(null);
-
   return (
-    <CardContent className="h-full p-4">
+    <CardContent className="h-full p-3">
       <div className="h-full flex flex-col">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-base font-medium text-gray-900">情绪记录</h3>
-          <div className="flex items-center gap-2 text-xs text-gray-500">
-            <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
-            最近更新
-          </div>
+        {/* 标题 */}
+        <div className="flex items-center gap-2 mb-3">
+          <svg className="w-4 h-4 text-rose-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span className="text-sm font-medium text-gray-900">情绪轨迹</span>
         </div>
 
-        <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-3">
-          {mockHistoryData.map((entry) => (
-            <div
-              key={entry.id}
-              className={`
-                group rounded-xl border transition-all duration-300 cursor-pointer
-                ${selectedEntry === entry.id
-                  ? 'border-rose-200 bg-rose-50/50'
-                  : 'border-gray-100 hover:border-rose-200/50 hover:bg-rose-50/30'
-                }
-              `}
-              onClick={() => setSelectedEntry(entry.id)}
-            >
-              <div className="p-3 space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">{entry.emotion.icon}</span>
-                    <span className="text-sm font-medium text-gray-900">{entry.emotion.name}</span>
-                    <span className="text-xs text-gray-500">强度 {entry.intensity}%</span>
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    <div>{entry.date}</div>
-                    <div className="text-right">{entry.time}</div>
-                  </div>
-                </div>
-                
-                <div className="text-sm text-gray-600 line-clamp-2">
-                  {entry.content}
-                </div>
+        {/* 情绪记录 */}
+        <div className="flex-1 flex items-center">
+          <div className="w-full flex gap-2 overflow-x-auto custom-scrollbar pb-1">
+            {mockHistoryData.map((entry) => (
+              <div
+                key={entry.id}
+                className="flex-shrink-0 w-28 group"
+              >
+                <div className="relative rounded-xl transition-all duration-300 hover:scale-105">
+                  <div className={`
+                    absolute inset-0 rounded-xl bg-gradient-to-r opacity-50 transition-opacity duration-300 group-hover:opacity-75
+                    ${emotionGradients[entry.emotion.type as keyof typeof emotionGradients]}
+                  `} />
+                  
+                  <div className="relative p-2.5 rounded-xl bg-white/80 backdrop-blur-sm border border-white/50 shadow-sm">
+                    {/* 头部信息 */}
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-lg">{entry.emotion.icon}</span>
+                      <div className="w-8 h-1 rounded-full bg-gray-100 overflow-hidden">
+                        <div 
+                          className="h-full rounded-full bg-rose-400 transition-all duration-300"
+                          style={{ width: `${entry.emotion.intensity}%` }}
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* 时间 */}
+                    <div className="mb-1.5">
+                      <div className="text-xs font-medium text-gray-900">{entry.date}</div>
+                      <div className="text-[10px] text-gray-500">{entry.time}</div>
+                    </div>
 
-                {selectedEntry === entry.id && (
-                  <div className="mt-3 pt-3 border-t border-rose-100/50">
-                    <div className="text-sm text-gray-600">
-                      <span className="text-rose-500">AI分析：</span>
-                      {entry.analysis}
+                    {/* 内容 */}
+                    <div className="text-[10px] leading-normal text-gray-600 line-clamp-3">
+                      {entry.content}
                     </div>
                   </div>
-                )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </CardContent>

@@ -45,6 +45,49 @@ const modules = [
 export default function EmotionArchivePage() {
   // 控制侧边导航栏的展开状态
   const [isNavExpanded, setIsNavExpanded] = useState(false);
+  // AI分析状态
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysis, setAnalysis] = useState<{
+    emotion: {
+      type: string;
+      name: string;
+      icon: string;
+      intensity: number;
+    };
+    analysis: string;
+    suggestions: string[];
+  } | null>(null);
+
+  // 模拟AI分析
+  const handleAnalyzeEmotion = async (note: string) => {
+    setIsAnalyzing(true);
+    setAnalysis(null);
+
+    try {
+      // 模拟API调用延迟
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      // 模拟分析结果
+      setAnalysis({
+        emotion: {
+          type: 'joy',
+          name: '愉悦',
+          icon: '😊',
+          intensity: 85
+        },
+        analysis: "根据你的描述，我注意到你在面对工作压力时倾向于自我怀疑。这种情绪反应是很自然的，但也显示你可能对自己要求过高。建议你尝试将注意力从'我做得够好吗'转移到'我从这个经历中学到了什么'。",
+        suggestions: [
+          "尝试每天记录三件做得好的小事，培养积极的自我对话",
+          "在感到压力时，给自己5分钟的正念呼吸时间",
+          "与信任的同事或朋友分享你的顾虑，获取不同的视角"
+        ]
+      });
+    } catch (error) {
+      console.error('分析失败:', error);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
 
   const handleMouseEnter = useCallback(() => {
     setIsNavExpanded(true);
@@ -55,42 +98,43 @@ export default function EmotionArchivePage() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-b from-white to-rose-50/30">
+    <div className="flex flex-col h-screen bg-gradient-to-br from-rose-50/30 via-white to-rose-50/20">
       {/* 主要内容区域 */}
-      <div className="h-full w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="h-full grid grid-cols-12 gap-4">
-          {/* 左侧：情绪记录和AI分析 */}
-          <div className="col-span-7 h-full grid grid-rows-2 gap-4">
-            {/* 情绪记录区域 */}
-            <div className="row-span-1 bg-white/60 backdrop-blur-md shadow-sm rounded-3xl border-none overflow-hidden">
-              <EmotionRecorder />
-            </div>
-            {/* AI分析区域 */}
-            <div className="row-span-1 bg-white/60 backdrop-blur-md shadow-sm rounded-3xl border-none overflow-hidden">
-              <EmotionAIAnalysis />
-            </div>
-          </div>
+      <div className="relative flex-1 w-full">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="flex gap-6 h-[40rem] max-h-[85vh] px-6">
+            {/* 主要区域（情绪记录） */}
+            <div className="w-[40rem] flex flex-col bg-gradient-to-br from-white/80 to-white/40 backdrop-blur-md shadow-sm rounded-3xl border border-white/50 overflow-hidden">
+              {/* 标题 */}
+              <div className="text-center py-6">
+                <p className="text-base text-gray-500">记录下你的想法，让我来感知你的情绪</p>
+              </div>
 
-          {/* 右侧：日历和历史记录 */}
-          <div className="col-span-5 h-full grid grid-rows-6 gap-4">
-            {/* 日历区域 */}
-            <div className="row-span-1 bg-white/60 backdrop-blur-md shadow-sm rounded-3xl border-none overflow-hidden">
-              {/* 日历组件占位 */}
-              <div className="h-full p-3 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="relative w-8 h-8 mx-auto">
-                    <svg className="absolute inset-0 text-rose-200 animate-pulse" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-                    </svg>
-                  </div>
-                  <p className="mt-1 text-xs text-gray-500">日历视图开发中</p>
+              {/* 动画区域占位 */}
+              <div className="flex items-center justify-center px-6 pb-4">
+                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-rose-100/50 to-transparent flex items-center justify-center text-rose-300/50">
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
+                  </svg>
                 </div>
+              </div>
+
+              {/* 情绪轨迹区域 */}
+              <div className="px-6 pb-4 flex-1">
+                <div className="h-full bg-gradient-to-br from-white/80 to-white/40 backdrop-blur-md shadow-sm rounded-2xl border border-white/50 overflow-hidden">
+                  <EmotionHistory />
+                </div>
+              </div>
+
+              {/* 输入区域 */}
+              <div className="px-6 pb-6">
+                <EmotionRecorder onSubmit={handleAnalyzeEmotion} />
               </div>
             </div>
 
-            {/* 历史记录区域 */}
-            <div className="row-span-5 bg-white/60 backdrop-blur-md shadow-sm rounded-3xl border-none overflow-hidden">
-              <EmotionHistory />
+            {/* AI解读区域 */}
+            <div className="w-[20rem] h-full bg-gradient-to-br from-white/80 to-white/40 backdrop-blur-md shadow-sm rounded-3xl border border-white/50 overflow-hidden">
+              <EmotionAIAnalysis isLoading={isAnalyzing} analysis={analysis} />
             </div>
           </div>
         </div>
