@@ -3,48 +3,13 @@
 import Link from 'next/link';
 import { useState, useCallback } from 'react';
 import { EmotionRecorder } from '../_components/EmotionRecorder';
-import { EmotionAnalytics } from '../_components/EmotionAnalytics';
 import { EmotionAIAnalysis } from '../_components/EmotionAIAnalysis';
 import { EmotionHistory } from '../_components/EmotionHistory';
-
-// 定义导航模块数据
-const modules = [
-  {
-    id: 'value-compass',
-    name: '心灵导航',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
-      </svg>
-    ),
-    href: '/advisor'
-  },
-  {
-    id: 'emotion-archive',
-    name: '情绪档案',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-      </svg>
-    ),
-    href: '/emotion-archive',
-    active: true
-  },
-  {
-    id: 'personality-modeling',
-    name: '人格建模',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
-      </svg>
-    ),
-    href: '/personality-modeling'
-  }
-];
+import { BackHomeButton } from '@/app/_components/BackHomeButton';
+import { SideNav } from '@/app/_components/SideNav';
+import { getNavModules } from '@/app/_config/navigation';
 
 export default function EmotionArchivePage() {
-  // 控制侧边导航栏的展开状态
-  const [isNavExpanded, setIsNavExpanded] = useState(false);
   // AI分析状态
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<{
@@ -89,103 +54,81 @@ export default function EmotionArchivePage() {
     }
   };
 
-  const handleMouseEnter = useCallback(() => {
-    setIsNavExpanded(true);
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setIsNavExpanded(false);
-  }, []);
-
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-rose-50/30 via-white to-rose-50/20">
       {/* 主要内容区域 */}
       <div className="relative flex-1 w-full">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="flex gap-6 h-[40rem] max-h-[85vh] px-6">
-            {/* 主要区域（情绪记录） */}
-            <div className="w-[40rem] flex flex-col bg-gradient-to-br from-white/80 to-white/40 backdrop-blur-md shadow-sm rounded-3xl border border-white/50 overflow-hidden">
-              {/* 标题 */}
-              <div className="text-center py-6">
-                <p className="text-base text-gray-500">记录下你的想法，让我来感知你的情绪</p>
+        {/* 背景装饰 */}
+        <div className="absolute inset-0 bg-grid-gray-900/[0.02] -z-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/50 to-transparent backdrop-blur-[1px] -z-10" />
+
+        {/* 主要区域（情绪记录），通过绝对定位水平居中并垂直居中 */}
+        <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[clamp(35rem,42vw,48rem)] min-h-[35rem] max-h-[88vh] flex flex-col bg-gradient-to-br from-white/95 to-white/75 backdrop-blur-2xl shadow-xl rounded-[2rem] border border-white/60 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:border-white/70">
+          {/* 动画区域占位 */}
+          <div className="flex items-center justify-center px-5 py-8">
+            <div className="relative w-24 h-24 group">
+              {/* 外层光环 */}
+              <div className="absolute -inset-1.5 rounded-full bg-gradient-to-r from-rose-200/30 via-rose-300/40 to-rose-200/30 blur-md animate-spin-reverse-slow opacity-75 group-hover:opacity-90 transition-all duration-300" />
+              
+              {/* 能量流动效果 - 主层 */}
+              <div className="absolute inset-0 rounded-full overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-conic from-rose-200/50 via-rose-300/60 to-rose-200/50 animate-spin-slow group-hover:animate-spin-slower transition-all duration-300" />
+                <div className="absolute inset-0 bg-gradient-conic from-white/50 via-transparent to-white/50 animate-spin-slower mix-blend-overlay" />
+                <div className="absolute inset-1 rounded-full bg-gradient-to-br from-white/95 to-white/80 backdrop-blur-sm group-hover:from-white/90 transition-all duration-300" />
               </div>
 
-              {/* 动画区域占位 */}
-              <div className="flex items-center justify-center px-6 pb-4">
-                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-rose-100/50 to-transparent flex items-center justify-center text-rose-300/50">
-                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
+              {/* 内部光效 */}
+              <div className="absolute inset-1 rounded-full overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-conic from-rose-100/30 via-transparent to-rose-100/30 animate-spin-reverse-slower" />
+                <div className="absolute inset-0 bg-gradient-radial from-rose-100/20 via-transparent to-transparent animate-pulse-slow" />
+              </div>
+
+              {/* 主图标容器 */}
+              <div className="absolute inset-0 rounded-full flex items-center justify-center">
+                <div className="relative flex items-center justify-center text-rose-400/80 transition-all duration-500 group-hover:scale-110 group-hover:text-rose-400">
+                  <div className="absolute inset-0 bg-gradient-radial from-rose-100/40 via-transparent to-transparent animate-pulse-slow" />
+                  <svg 
+                    className="relative w-8 h-8 transform transition-all duration-700 animate-float group-hover:rotate-[360deg]" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    strokeWidth={1.2} 
+                    stroke="currentColor"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" 
+                    />
                   </svg>
                 </div>
               </div>
-
-              {/* 情绪轨迹区域 */}
-              <div className="px-6 pb-4 flex-1">
-                <div className="h-full bg-gradient-to-br from-white/80 to-white/40 backdrop-blur-md shadow-sm rounded-2xl border border-white/50 overflow-hidden">
-                  <EmotionHistory />
-                </div>
-              </div>
-
-              {/* 输入区域 */}
-              <div className="px-6 pb-6">
-                <EmotionRecorder onSubmit={handleAnalyzeEmotion} />
-              </div>
-            </div>
-
-            {/* AI解读区域 */}
-            <div className="w-[20rem] h-full bg-gradient-to-br from-white/80 to-white/40 backdrop-blur-md shadow-sm rounded-3xl border border-white/50 overflow-hidden">
-              <EmotionAIAnalysis isLoading={isAnalyzing} analysis={analysis} />
             </div>
           </div>
+
+          {/* 情绪轨迹区域 */}
+          <div className="px-5 pb-4 flex-1">
+            <div className="h-full bg-gradient-to-br from-white/90 to-white/50 backdrop-blur-xl shadow-lg rounded-2xl border border-white/60 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-white/70 hover:from-white/95">
+              <EmotionHistory />
+            </div>
+          </div>
+
+          {/* 输入区域 */}
+          <div className="px-5 pb-5">
+            <EmotionRecorder onSubmit={handleAnalyzeEmotion} />
+          </div>
+        </div>
+
+        {/* AI解读区域，绝对定位在主要区域右侧 */}
+        <div className="absolute top-1/2 transform -translate-y-1/2 left-[calc(50%+min(22vw,24.5rem))] w-[clamp(16rem,26vw,20rem)] min-h-[35rem] max-h-[88vh] bg-gradient-to-br from-white/95 to-white/75 backdrop-blur-2xl shadow-xl rounded-[2rem] border border-white/60 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:border-white/70">
+          <EmotionAIAnalysis isLoading={isAnalyzing} analysis={analysis} />
         </div>
       </div>
 
       {/* 返回主页按钮 */}
-      <div className="fixed top-5 left-5 z-50">
-        <Link
-          href="/"
-          className="group relative flex items-center gap-2 rounded-full bg-white/90 pl-2.5 pr-3.5 py-1.5 shadow-md ring-1 ring-gray-900/5 backdrop-blur-md transition-all duration-300 hover:bg-white hover:shadow-rose-200/50 hover:-translate-y-0.5"
-        >
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-rose-600/10 text-rose-600 transition-transform duration-300 group-hover:-rotate-12">
-            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-            </svg>
-          </span>
-          <span className="text-sm font-medium text-gray-900">返回主页</span>
-          <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-rose-500/0 via-rose-500/70 to-rose-500/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-        </Link>
-      </div>
+      <BackHomeButton theme="rose" />
 
       {/* 侧边导航栏 */}
-      <nav 
-        className={`fixed left-5 top-1/2 -translate-y-1/2 z-40 transition-all duration-300 ease-in-out ${isNavExpanded ? 'w-40' : 'w-12'}`}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-md ring-1 ring-gray-900/5 p-1.5">
-          <div className="space-y-1">
-            {modules.map((module) => (
-              <Link
-                key={module.id}
-                href={module.href}
-                className={`flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-all duration-200 group
-                  ${module.active
-                    ? 'text-rose-600 bg-rose-50'
-                    : 'text-gray-600 hover:text-rose-600 hover:bg-rose-50/50'
-                  }
-                `}
-              >
-                <span className="flex-shrink-0 transition-transform duration-200 group-hover:scale-110">
-                  {module.icon}
-                </span>
-                <span className={`text-sm font-medium truncate transition-opacity duration-200 ${isNavExpanded ? 'opacity-100' : 'opacity-0'}`}>
-                  {module.name}
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </nav>
+      <SideNav modules={getNavModules('emotion-archive')} theme="rose" />
     </div>
   );
 } 
