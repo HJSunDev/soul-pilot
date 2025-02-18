@@ -13,6 +13,8 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as advisor_mutations from "../advisor/mutations.js";
+import type * as advisor_queries from "../advisor/queries.js";
 import type * as advisor_services from "../advisor/services.js";
 
 /**
@@ -24,6 +26,8 @@ import type * as advisor_services from "../advisor/services.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  "advisor/mutations": typeof advisor_mutations;
+  "advisor/queries": typeof advisor_queries;
   "advisor/services": typeof advisor_services;
 }>;
 export declare const api: FilterApi<
