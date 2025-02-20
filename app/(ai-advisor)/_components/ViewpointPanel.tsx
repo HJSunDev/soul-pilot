@@ -2,6 +2,14 @@
 
 import { useState } from 'react';
 import type { Viewpoint } from './AdvisorView';
+import { ViewpointEditor } from './ViewpointEditor';
+
+// 为不同三观类型定义引导性的空状态文案
+const emptyStateText = {
+  '世界观': '探索你眼中的世界...',
+  '人生观': '思考人生的意义...',
+  '价值观': '发现内心的指南针...'
+};
 
 // ViewpointPanel组件的属性接口
 export interface ViewpointPanelProps {
@@ -20,75 +28,87 @@ export const ViewpointPanel = ({
   onBlur,
   isActive 
 }: ViewpointPanelProps) => {
-  // 控制面板展开/收起状态
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div 
-      className={`
-        bg-white/80 backdrop-blur-xs rounded-xl shadow-lg p-6
-        transition-all duration-300
-        ${isActive ? 'ring-2 ring-indigo-500/50 shadow-indigo-100' : ''}
-      `}
-    >
-      {/* 标题栏区域 */}
-      <div 
-        className="flex items-center justify-between cursor-pointer"
-        onClick={() => setIsExpanded(!isExpanded)}
+    <>
+      <div
+        onClick={() => setIsEditing(true)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className={`
+          relative group h-[5.5rem]
+          bg-white/95 backdrop-blur-sm rounded-xl
+          border border-zinc-100/80
+          transition-all duration-300 cursor-pointer
+          hover:bg-white/98 hover:shadow-lg hover:shadow-indigo-500/5
+          hover:border-indigo-100
+          overflow-hidden
+          ${isActive ? 'ring-1 ring-indigo-500/30' : ''}
+        `}
       >
-        <h3 className="text-lg font-semibold text-gray-900">
-          {viewpoint.title}
-        </h3>
-        {/* 展开/收起按钮 */}
-        <button
-          className={`
-            w-6 h-6 flex items-center justify-center rounded-full
-            text-gray-400 hover:text-gray-600
-            transition-transform duration-300
-            ${isExpanded ? 'rotate-180' : ''}
-          `}
-        >
-          <svg 
-            className="w-4 h-4" 
-            fill="none" 
-            viewBox="0 0 24 24" 
-            stroke="currentColor"
-          >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M19 9l-7 7-7-7" 
-            />
-          </svg>
-        </button>
+        <div className="p-4 h-full flex flex-col">
+          {/* 标题和描述区域 */}
+          <div className="flex justify-between items-start">
+            <div>
+              {/* 三观名称 - 最大视觉权重 */}
+              <h3 className="text-base font-medium text-gray-900 group-hover:text-indigo-600 transition-colors">
+                {viewpoint.title}
+              </h3>
+              {/* 描述信息 - 次要信息 */}
+              <p className="text-[0.8125rem] text-gray-400 mt-0.5 leading-relaxed">
+                {viewpoint.description}
+              </p>
+            </div>
+
+            {/* 无内容状态下的编辑图标 */}
+            {!viewpoint.content && (
+              <div className="relative -mt-0.5">
+                <svg 
+                  className="w-4 h-4 text-gray-300 group-hover:text-indigo-400 
+                    transition-all duration-300 group-hover:scale-105" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={1.5} 
+                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" 
+                  />
+                </svg>
+              </div>
+            )}
+          </div>
+
+          {/* 内容状态指示器 */}
+          {viewpoint.content && (
+            <div className="absolute right-4 bottom-4 flex items-center gap-[2px]">
+              <span className="w-[3px] h-[3px] rounded-full bg-gray-300" />
+              <span className="w-[3px] h-[3px] rounded-full bg-gray-300" />
+              <span className="w-[3px] h-[3px] rounded-full bg-gray-300" />
+            </div>
+          )}
+        </div>
+
+        {/* 悬浮渐变效果 */}
+        <div className={`
+          absolute inset-0
+          bg-gradient-to-br from-indigo-50/30 via-transparent to-purple-50/30
+          opacity-0 group-hover:opacity-100
+          transition-opacity duration-500
+          pointer-events-none
+        `} />
       </div>
-      {/* 描述文本 */}
-      <p className="text-sm text-gray-600 mt-2">
-        {viewpoint.description}
-      </p>
-      {/* 可展开的文本输入区域 */}
-      <div className={`
-        overflow-hidden transition-all duration-300
-        ${isExpanded ? 'max-h-40 opacity-100 mt-4' : 'max-h-0 opacity-0'}
-      `}>
-        <textarea
-          value={viewpoint.content}
-          onChange={(e) => onChange(e.target.value)}
-          onFocus={onFocus}
-          onBlur={onBlur}
-          placeholder="请输入你的想法..."
-          className="w-full h-32 p-3 text-sm text-gray-700 bg-white/50 
-            border border-gray-200 rounded-lg resize-none
-            transition-all duration-200 ease-in-out
-            placeholder:text-gray-400
-            hover:border-gray-300
-            focus:border-indigo-300 
-            focus:ring-2 focus:ring-indigo-200/50 
-            focus:bg-white
-            focus:shadow-[0_2px_12px_rgba(99,102,241,0.12)]"
-        />
-      </div>
-    </div>
+
+      <ViewpointEditor
+        viewpoint={viewpoint}
+        isOpen={isEditing}
+        onClose={() => setIsEditing(false)}
+        onChange={onChange}
+      />
+    </>
   );
 }; 
