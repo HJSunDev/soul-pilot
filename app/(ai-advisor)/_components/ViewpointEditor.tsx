@@ -2,6 +2,7 @@
 
 import { type Viewpoint } from './AdvisorView'
 import { FullScreenPortal } from '@/components/ui/full-screen-portal'
+import { Tiptap } from '@/components/ui/tiptap'
 
 interface ViewpointEditorProps {
   viewpoint: Viewpoint
@@ -54,16 +55,11 @@ export const ViewpointEditor = ({
 
         {/* 编辑区 */}
         <div className="flex-1 mt-6">
-          <textarea
-            value={viewpoint.content}
-            onChange={(e) => onChange(e.target.value)}
+          <Tiptap 
+            content={viewpoint.content}
+            onChange={onChange}
             placeholder={`请详细描述你的${viewpoint.title}...`}
-            className="w-full h-full p-4 text-base text-gray-700 
-              bg-white/50 rounded-lg resize-none
-              transition-all duration-200
-              placeholder:text-gray-400
-              focus:outline-none focus:bg-white
-              border-0"
+            className="h-full"
           />
         </div>
       </div>
