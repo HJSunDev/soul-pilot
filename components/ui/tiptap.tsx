@@ -19,20 +19,23 @@ import Bold from '@tiptap/extension-bold'
 import Italic from '@tiptap/extension-italic'
 import { cn } from "@/lib/utils"
 import { TiptapToolbar } from './tiptap-toolbar'
+import type { EditStatus } from '@/app/(ai-advisor)/_components/AdvisorView'
 
 interface TiptapProps {
-  content?: string;
-  onChange?: (content: string) => void;
-  className?: string;
-  placeholder?: string;
+  content: string
+  onChange: (value: string) => void
+  placeholder?: string
+  className?: string
+  editStatus?: EditStatus
 }
 
-export const Tiptap = ({ 
-  content = '', 
+export function Tiptap({ 
+  content, 
   onChange, 
-  className,
   placeholder,
-}: TiptapProps) => {
+  className = '',
+  editStatus = 'editing'
+}: TiptapProps) {
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [mounted, setMounted] = useState(false)
 
@@ -113,7 +116,7 @@ export const Tiptap = ({
       },
     },
     onUpdate: ({ editor }) => {
-      onChange?.(editor.getHTML())
+      onChange(editor.getHTML())
     },
   })
 
@@ -142,6 +145,7 @@ export const Tiptap = ({
         editor={editor} 
         isFullscreen={isFullscreen}
         onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
+        editStatus={editStatus}
       />
       <div className="flex-1 overflow-y-auto">
         <div className="min-h-full">
@@ -175,6 +179,7 @@ export const Tiptap = ({
             editor={editor} 
             isFullscreen={isFullscreen}
             onToggleFullscreen={() => setIsFullscreen(false)}
+            editStatus={editStatus}
           />
         </div>
       </div>

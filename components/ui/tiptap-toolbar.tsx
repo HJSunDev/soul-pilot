@@ -3,6 +3,31 @@
 import { type Editor } from '@tiptap/react'
 import { cn } from '@/lib/utils'
 import { Expand, Shrink } from 'lucide-react'
+import type { EditStatus } from '@/app/(ai-advisor)/_components/AdvisorView'
+
+// 状态配置
+const statusConfig = {
+  editing: {
+    text: '编辑中',
+    color: 'text-indigo-600/90',
+    bg: 'bg-indigo-50/80'
+  },
+  saving: {
+    text: '保存中',
+    color: 'text-amber-600/90',
+    bg: 'bg-amber-50/80'
+  },
+  saved: {
+    text: '已保存',
+    color: 'text-emerald-600/90',
+    bg: 'bg-emerald-50/80'
+  },
+  error: {
+    text: '保存失败',
+    color: 'text-rose-600/90',
+    bg: 'bg-rose-50/80'
+  }
+} as const;
 
 interface ToolbarButtonProps {
   onClick: () => void
@@ -41,10 +66,18 @@ interface TiptapToolbarProps {
   editor: Editor | null
   isFullscreen?: boolean
   onToggleFullscreen?: () => void
+  editStatus?: EditStatus
 }
 
-export function TiptapToolbar({ editor, isFullscreen, onToggleFullscreen }: TiptapToolbarProps) {
+export function TiptapToolbar({ 
+  editor, 
+  isFullscreen, 
+  onToggleFullscreen,
+  editStatus = 'editing'
+}: TiptapToolbarProps) {
   if (!editor) return null
+
+  const status = statusConfig[editStatus];
 
   return (
     <div className="border-b border-zinc-200 p-2 flex justify-between items-center">
@@ -181,17 +214,30 @@ export function TiptapToolbar({ editor, isFullscreen, onToggleFullscreen }: Tipt
         </div>
       </div>
 
-      <ToolbarButton
-        onClick={() => onToggleFullscreen?.()}
-        title={isFullscreen ? "退出全屏" : "全屏编辑"}
-        className="ml-2"
-      >
-        {isFullscreen ? (
-          <Shrink className="w-4 h-4" />
-        ) : (
-          <Expand className="w-4 h-4" />
-        )}
-      </ToolbarButton>
+      <div className="flex items-center gap-2">
+        <span 
+          className={cn(
+            'px-2 py-0.5 text-xs font-medium rounded-full transition-all duration-300',
+            status.color,
+            status.bg,
+            isFullscreen && 'scale-105'
+          )}
+        >
+          {status.text}
+        </span>
+
+        <ToolbarButton
+          onClick={() => onToggleFullscreen?.()}
+          title={isFullscreen ? "退出全屏" : "全屏编辑"}
+          className="ml-1"
+        >
+          {isFullscreen ? (
+            <Shrink className="w-4 h-4" />
+          ) : (
+            <Expand className="w-4 h-4" />
+          )}
+        </ToolbarButton>
+      </div>
     </div>
   )
 } 
