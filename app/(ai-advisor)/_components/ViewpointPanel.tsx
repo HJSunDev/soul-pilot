@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { Viewpoint } from './AdvisorView';
+import type { Viewpoint, EditStatus } from './AdvisorView';
 import { ViewpointEditor } from './ViewpointEditor';
 
 // ViewpointPanel组件的属性接口
@@ -12,6 +12,7 @@ export interface ViewpointPanelProps {
   onBlur?: () => void;          // 失去焦点时的回调
   isActive?: boolean;           // 是否处于激活状态
   isLoading?: boolean;          // 是否处于加载状态
+  editStatus?: EditStatus;      // 编辑状态
 }
 
 // ViewpointPanel组件:用于展示和编辑单个三观内容
@@ -19,7 +20,8 @@ export const ViewpointPanel = ({
   viewpoint, 
   onChange,
   isActive,
-  isLoading = false
+  isLoading = false,
+  editStatus
 }: ViewpointPanelProps) => {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -120,6 +122,7 @@ export const ViewpointPanel = ({
         isOpen={isEditing}
         onClose={() => setIsEditing(false)}
         onChange={onChange}
+        editStatus={editStatus}
       />
     </>
   );

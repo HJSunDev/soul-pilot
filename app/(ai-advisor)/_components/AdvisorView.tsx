@@ -9,6 +9,9 @@ import { api } from "@/convex/_generated/api";
 import { debounce } from 'lodash';
 // import { toast } from "sonner";
 
+// 定义编辑状态类型
+export type EditStatus = 'editing' | 'saving' | 'saved' | 'error';
+
 // 定义三观数据结构接口
 export interface Viewpoint {
   title: string;      // 三观类型标题
@@ -47,6 +50,8 @@ export const AdvisorView = () => {
   const [isLoading, setIsLoading] = useState(false);
   // 保存状态
   const [isSaving, setIsSaving] = useState<Record<string, boolean>>({});
+  // 编辑状态
+  const [editStatus, setEditStatus] = useState<Record<string, EditStatus>>({});
 
   // 当从服务器获取到三观数据时，更新状态
   useEffect(() => {
@@ -64,14 +69,29 @@ export const AdvisorView = () => {
         const fieldName = getFieldName(type);
         if (!fieldName) return;
 
-        setIsSaving(prev => ({ ...prev, [type]: true }));
+        setEditStatus(prev => ({ ...prev, [type]: 'saving' }));
         
         await updateWorldview({
           [fieldName]: value
         });
 
+        // 设置保存成功状态
+        setEditStatus(prev => ({ ...prev, [type]: 'saved' }));
+        
+        // 2秒后清除状态
+        setTimeout(() => {
+          setEditStatus(prev => {
+            const newStatus = { ...prev };
+            delete newStatus[type];
+            return newStatus;
+          });
+        }, 2000);
+
       } catch (error) {
         console.error('保存失败:', error);
+        // 设置错误状态
+        setEditStatus(prev => ({ ...prev, [type]: 'error' }));
+        
         // 回滚状态
         if (worldviews) {
           switch (type) {
@@ -86,8 +106,6 @@ export const AdvisorView = () => {
               break;
           }
         }
-      } finally {
-        setIsSaving(prev => ({ ...prev, [type]: false }));
       }
     }, 1000),
     [updateWorldview, worldviews]
@@ -114,6 +132,9 @@ export const AdvisorView = () => {
 
   // 处理三观内容变更
   const handleViewpointChange = (type: string, value: string) => {
+    // 设置编辑中状态
+    setEditStatus(prev => ({ ...prev, [type]: 'editing' }));
+
     // 乐观更新本地状态
     switch (type) {
       case '世界观':
@@ -165,6 +186,7 @@ export const AdvisorView = () => {
             viewpoint={viewpoint}
             onChange={(value) => handleViewpointChange(viewpoint.title, value)}
             isLoading={worldviews === undefined}
+            editStatus={editStatus[viewpoint.title]}
           />
         ))}
       </div>

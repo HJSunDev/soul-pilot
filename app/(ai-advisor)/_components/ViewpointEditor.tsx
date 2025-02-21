@@ -1,6 +1,6 @@
 'use client'
 
-import { type Viewpoint } from './AdvisorView'
+import { type Viewpoint, type EditStatus } from './AdvisorView'
 import { FullScreenPortal } from '@/components/ui/full-screen-portal'
 import { Tiptap } from '@/components/ui/tiptap'
 
@@ -9,14 +9,42 @@ interface ViewpointEditorProps {
   isOpen: boolean
   onClose: () => void
   onChange: (value: string) => void
+  editStatus?: EditStatus
 }
+
+// 状态配置
+const statusConfig = {
+  editing: {
+    text: '编辑中',
+    color: 'text-indigo-600/90',
+    bg: 'bg-indigo-50/80'
+  },
+  saving: {
+    text: '保存中',
+    color: 'text-amber-600/90',
+    bg: 'bg-amber-50/80'
+  },
+  saved: {
+    text: '已保存',
+    color: 'text-emerald-600/90',
+    bg: 'bg-emerald-50/80'
+  },
+  error: {
+    text: '保存失败',
+    color: 'text-rose-600/90',
+    bg: 'bg-rose-50/80'
+  }
+} as const;
 
 export const ViewpointEditor = ({
   viewpoint,
   isOpen,
   onClose,
   onChange,
+  editStatus = 'editing'
 }: ViewpointEditorProps) => {
+  const status = statusConfig[editStatus];
+
   return (
     <FullScreenPortal 
       isOpen={isOpen} 
@@ -31,8 +59,14 @@ export const ViewpointEditor = ({
                 {viewpoint.title}
               </h2>
               {/* 编辑状态指示器 */}
-              <span className="px-2 py-0.5 text-xs font-medium text-indigo-600/90 bg-indigo-50/80 rounded-full">
-                编辑中
+              <span 
+                className={`
+                  px-2 py-0.5 text-xs font-medium rounded-full
+                  transition-all duration-300
+                  ${status.color} ${status.bg}
+                `}
+              >
+                {status.text}
               </span>
             </div>
 
