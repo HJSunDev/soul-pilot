@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ViewpointPanel } from './ViewpointPanel';
 import { ScenarioInput } from './ScenarioInput';
 import { AdviceDisplay } from './AdviceDisplay';
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 // 定义三观数据结构接口
 export interface Viewpoint {
@@ -13,6 +15,9 @@ export interface Viewpoint {
 }
 
 export const AdvisorView = () => {
+  // 从 Convex 获取用户的三观信息
+  const worldviews = useQuery(api.advisor.queries.getUserWorldviews);
+
   // 用户输入的三观内容状态
   const [worldview, setWorldview] = useState<string>('');
   const [lifeview, setLifeview] = useState<string>('');
@@ -22,6 +27,15 @@ export const AdvisorView = () => {
   const [advice, setAdvice] = useState<string>('');
   // 加载状态
   const [isLoading, setIsLoading] = useState(false);
+
+  // 当从服务器获取到三观数据时，更新状态
+  useEffect(() => {
+    if (worldviews) {
+      setWorldview(worldviews.worldview || '');
+      setLifeview(worldviews.lifePhilosophy || '');
+      setValues(worldviews.values || '');
+    }
+  }, [worldviews]);
 
   // 三观配置数据
   const viewpoints: Viewpoint[] = [
@@ -59,15 +73,26 @@ export const AdvisorView = () => {
 
   // 处理场景提交,获取AI建议
   const handleScenarioSubmit = async (scenario: string) => {
+    if (!worldview && !lifeview && !values) {
+      // TODO: 添加提示，建议用户先填写三观信息
+      return;
+    }
+
     setScenario(scenario);
     setIsLoading(true);
     
-    // TODO: 调用 AI API 获取建议
-    // 这里模拟 API 调用
-    setTimeout(() => {
-      setAdvice('基于您的输入，我的建议是...');
+    try {
+      // TODO: 调用 AI API 获取建议
+      // 这里模拟 API 调用
+      setTimeout(() => {
+        setAdvice('基于您的输入，我的建议是...');
+        setIsLoading(false);
+      }, 2000);
+    } catch (error) {
+      console.error('获取AI建议失败:', error);
       setIsLoading(false);
-    }, 2000);
+      // TODO: 添加错误提示
+    }
   };
 
   return (
@@ -79,6 +104,7 @@ export const AdvisorView = () => {
             key={viewpoint.title}
             viewpoint={viewpoint}
             onChange={(value) => handleViewpointChange(viewpoint.title, value)}
+            isLoading={worldviews === undefined}
           />
         ))}
       </div>

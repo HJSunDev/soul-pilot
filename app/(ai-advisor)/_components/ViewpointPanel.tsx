@@ -4,13 +4,6 @@ import { useState } from 'react';
 import type { Viewpoint } from './AdvisorView';
 import { ViewpointEditor } from './ViewpointEditor';
 
-// 为不同三观类型定义引导性的空状态文案
-const emptyStateText = {
-  '世界观': '探索你眼中的世界...',
-  '人生观': '思考人生的意义...',
-  '价值观': '发现内心的指南针...'
-};
-
 // ViewpointPanel组件的属性接口
 export interface ViewpointPanelProps {
   viewpoint: Viewpoint;         // 三观数据
@@ -18,25 +11,22 @@ export interface ViewpointPanelProps {
   onFocus?: () => void;         // 获得焦点时的回调
   onBlur?: () => void;          // 失去焦点时的回调
   isActive?: boolean;           // 是否处于激活状态
+  isLoading?: boolean;          // 是否处于加载状态
 }
 
 // ViewpointPanel组件:用于展示和编辑单个三观内容
 export const ViewpointPanel = ({ 
   viewpoint, 
   onChange,
-  onFocus,
-  onBlur,
-  isActive 
+  isActive,
+  isLoading = false
 }: ViewpointPanelProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <>
       <div
-        onClick={() => setIsEditing(true)}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onClick={() => !isLoading && setIsEditing(true)}
         className={`
           relative group h-[5.5rem]
           bg-white/95 backdrop-blur-sm rounded-xl
@@ -46,6 +36,7 @@ export const ViewpointPanel = ({
           hover:border-indigo-100
           overflow-hidden
           ${isActive ? 'ring-1 ring-indigo-500/30' : ''}
+          ${isLoading ? 'cursor-wait' : ''}
         `}
       >
         <div className="p-4 h-full flex flex-col">
@@ -62,9 +53,30 @@ export const ViewpointPanel = ({
               </p>
             </div>
 
-            {/* 无内容状态下的编辑图标 */}
-            {!viewpoint.content && (
-              <div className="relative -mt-0.5">
+            {/* 加载状态或编辑图标 */}
+            <div className="relative -mt-0.5">
+              {isLoading ? (
+                <svg 
+                  className="w-4 h-4 text-indigo-400 animate-spin" 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  fill="none" 
+                  viewBox="0 0 24 24"
+                >
+                  <circle 
+                    className="opacity-25" 
+                    cx="12" 
+                    cy="12" 
+                    r="10" 
+                    stroke="currentColor" 
+                    strokeWidth="4"
+                  />
+                  <path 
+                    className="opacity-75" 
+                    fill="currentColor" 
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+              ) : !viewpoint.content && (
                 <svg 
                   className="w-4 h-4 text-gray-300 group-hover:text-indigo-400 
                     transition-all duration-300 group-hover:scale-105" 
@@ -79,12 +91,12 @@ export const ViewpointPanel = ({
                     d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" 
                   />
                 </svg>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           {/* 内容状态指示器 */}
-          {viewpoint.content && (
+          {viewpoint.content && !isLoading && (
             <div className="absolute right-4 bottom-4 flex items-center gap-[2px]">
               <span className="w-[3px] h-[3px] rounded-full bg-gray-300" />
               <span className="w-[3px] h-[3px] rounded-full bg-gray-300" />
