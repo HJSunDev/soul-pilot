@@ -30,7 +30,7 @@ export const ViewpointEditor = ({
               <h2 className="text-xl font-semibold text-zinc-900">
                 {viewpoint.title}
               </h2>
-              {/* 编辑指示器 */}
+              {/* 编辑状态指示器 */}
               <span className="px-2 py-0.5 text-xs font-medium text-indigo-600/90 bg-indigo-50/80 rounded-full">
                 编辑中
               </span>

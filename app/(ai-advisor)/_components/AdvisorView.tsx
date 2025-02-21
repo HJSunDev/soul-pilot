@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ViewpointPanel } from './ViewpointPanel';
 import { ScenarioInput } from './ScenarioInput';
 import { AdviceDisplay } from './AdviceDisplay';
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { debounce } from 'lodash';
+// import { toast } from "sonner";
 
 // 定义三观数据结构接口
 export interface Viewpoint {
@@ -14,9 +16,25 @@ export interface Viewpoint {
   content: string;    // 用户输入的内容
 }
 
+// 获取字段名映射
+const getFieldName = (type: string): string => {
+  switch (type) {
+    case '世界观':
+      return 'worldview';
+    case '人生观':
+      return 'lifePhilosophy';
+    case '价值观':
+      return 'values';
+    default:
+      return '';
+  }
+};
+
 export const AdvisorView = () => {
   // 从 Convex 获取用户的三观信息
   const worldviews = useQuery(api.advisor.queries.getUserWorldviews);
+  // 获取更新三观的 mutation
+  const updateWorldview = useMutation(api.advisor.mutations.updateWorldviews);
 
   // 用户输入的三观内容状态
   const [worldview, setWorldview] = useState<string>('');
@@ -27,6 +45,8 @@ export const AdvisorView = () => {
   const [advice, setAdvice] = useState<string>('');
   // 加载状态
   const [isLoading, setIsLoading] = useState(false);
+  // 保存状态
+  const [isSaving, setIsSaving] = useState<Record<string, boolean>>({});
 
   // 当从服务器获取到三观数据时，更新状态
   useEffect(() => {
@@ -36,6 +56,42 @@ export const AdvisorView = () => {
       setValues(worldviews.values || '');
     }
   }, [worldviews]);
+
+  // 防抖保存函数
+  const debouncedSave = useCallback(
+    debounce(async (type: string, value: string) => {
+      try {
+        const fieldName = getFieldName(type);
+        if (!fieldName) return;
+
+        setIsSaving(prev => ({ ...prev, [type]: true }));
+        
+        await updateWorldview({
+          [fieldName]: value
+        });
+
+      } catch (error) {
+        console.error('保存失败:', error);
+        // 回滚状态
+        if (worldviews) {
+          switch (type) {
+            case '世界观':
+              setWorldview(worldviews.worldview || '');
+              break;
+            case '人生观':
+              setLifeview(worldviews.lifePhilosophy || '');
+              break;
+            case '价值观':
+              setValues(worldviews.values || '');
+              break;
+          }
+        }
+      } finally {
+        setIsSaving(prev => ({ ...prev, [type]: false }));
+      }
+    }, 1000),
+    [updateWorldview, worldviews]
+  );
 
   // 三观配置数据
   const viewpoints: Viewpoint[] = [
@@ -58,6 +114,7 @@ export const AdvisorView = () => {
 
   // 处理三观内容变更
   const handleViewpointChange = (type: string, value: string) => {
+    // 乐观更新本地状态
     switch (type) {
       case '世界观':
         setWorldview(value);
@@ -69,12 +126,15 @@ export const AdvisorView = () => {
         setValues(value);
         break;
     }
+
+    // 触发防抖保存
+    debouncedSave(type, value);
   };
 
   // 处理场景提交,获取AI建议
   const handleScenarioSubmit = async (scenario: string) => {
     if (!worldview && !lifeview && !values) {
-      // TODO: 添加提示，建议用户先填写三观信息
+      // toast.error('请先填写您的三观信息');
       return;
     }
 
@@ -91,7 +151,7 @@ export const AdvisorView = () => {
     } catch (error) {
       console.error('获取AI建议失败:', error);
       setIsLoading(false);
-      // TODO: 添加错误提示
+      // toast.error('获取建议失败，请重试');
     }
   };
 
