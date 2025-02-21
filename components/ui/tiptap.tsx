@@ -31,7 +31,7 @@ export const Tiptap = ({
   content = '', 
   onChange, 
   className,
-  placeholder = '开始写作...'
+  placeholder,
 }: TiptapProps) => {
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -91,21 +91,22 @@ export const Tiptap = ({
       attributes: {
         class: cn(
           'w-full h-full px-6 py-4',
-          'bg-white/50',
+          'bg-transparent',
           'focus:outline-none',
           '[&_*]:focus:outline-none',
           'transition-colors duration-200',
           'text-zinc-800',
-          'prose prose-sm sm:prose-base lg:prose-lg dark:prose-invert',
-          'prose-p:text-base prose-p:leading-relaxed prose-p:text-zinc-800',
-          'prose-strong:font-medium prose-strong:text-zinc-900',
-          'prose-em:text-zinc-800/90 prose-em:italic',
+          'prose prose-zinc prose-sm max-w-none',
+          'prose-p:text-base prose-p:leading-relaxed prose-p:text-zinc-700',
+          'prose-headings:font-medium prose-headings:text-zinc-900',
+          'prose-strong:font-medium prose-strong:text-zinc-800',
+          'prose-em:text-zinc-700/90 prose-em:italic',
           'prose-ul:my-2 prose-ul:list-none',
           'prose-ol:my-2 prose-ol:list-none',
-          'prose-blockquote:border-l-2 prose-blockquote:border-zinc-300/60 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-zinc-700',
-          '[&_mark]:bg-yellow-100',
-          '[&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mb-4 [&_h2]:text-zinc-900',
-          '[&_h3]:text-xl [&_h3]:font-medium [&_h3]:mb-3 [&_h3]:text-zinc-800',
+          'prose-blockquote:border-l-2 prose-blockquote:border-zinc-200 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-zinc-600',
+          '[&_mark]:bg-yellow-50/80 [&_mark]:px-1 [&_mark]:rounded-sm',
+          '[&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mb-3 [&_h2]:text-zinc-800',
+          '[&_h3]:text-lg [&_h3]:font-medium [&_h3]:mb-2 [&_h3]:text-zinc-700',
           'relative',
           className
         ),

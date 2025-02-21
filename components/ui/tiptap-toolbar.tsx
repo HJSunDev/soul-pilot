@@ -2,6 +2,7 @@
 
 import { type Editor } from '@tiptap/react'
 import { cn } from '@/lib/utils'
+import { Expand, Shrink } from 'lucide-react'
 
 interface ToolbarButtonProps {
   onClick: () => void
@@ -25,7 +26,7 @@ const ToolbarButton = ({
     disabled={disabled}
     title={title}
     className={cn(
-      'p-1.5 rounded-lg text-sm transition-colors',
+      'p-1.5 rounded-lg text-sm transition-colors cursor-pointer',
       'hover:bg-zinc-100 active:bg-zinc-200',
       'disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent',
       isActive && 'bg-zinc-100 text-indigo-600',
@@ -186,13 +187,9 @@ export function TiptapToolbar({ editor, isFullscreen, onToggleFullscreen }: Tipt
         className="ml-2"
       >
         {isFullscreen ? (
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M9 9L4 4m0 0v5m0-5h5M15 9l5-5m0 0v5m0-5h-5M9 15l-5 5m0 0v-5m0 5h5M15 15l5 5m0 0v-5m0 5h-5" />
-          </svg>
+          <Shrink className="w-4 h-4" />
         ) : (
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M4 8V4m0 0h4M4 4l5 5m11-5v4m0-4h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
-          </svg>
+          <Expand className="w-4 h-4" />
         )}
       </ToolbarButton>
     </div>
