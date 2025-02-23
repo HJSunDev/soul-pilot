@@ -68,7 +68,10 @@ export const getAdvice = action({
     }
 
     // 创建 OpenAI 客户端
-    const openai = new OpenAI({ apiKey });
+    const openai = new OpenAI({ 
+      apiKey,
+      baseURL: "https://openrouter.ai/api/v1",
+    });
 
     try {
       // 构建系统提示词

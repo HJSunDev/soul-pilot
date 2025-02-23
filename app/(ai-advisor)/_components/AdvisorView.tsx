@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { ViewpointPanel } from './ViewpointPanel';
 import { ScenarioInput } from './ScenarioInput';
 import { AdviceDisplay } from './AdviceDisplay';
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { debounce } from 'lodash';
 // import { toast } from "sonner";
@@ -39,6 +39,9 @@ export const AdvisorView = () => {
   // 获取更新三观的 mutation
   const updateWorldview = useMutation(api.advisor.mutations.updateWorldviews);
 
+  // 获取 AI 建议的 action
+  const getAIAdvice = useAction(api.advisor.services.getAdvice);
+
   // 用户输入的三观内容状态
   const [worldview, setWorldview] = useState<string>('');
   const [lifeview, setLifeview] = useState<string>('');
@@ -46,11 +49,9 @@ export const AdvisorView = () => {
   // 用户输入的场景和AI建议状态
   const [scenario, setScenario] = useState<string>('');
   const [advice, setAdvice] = useState<string>('');
-  // 加载状态
+  // 获取AI建议中-加载状态
   const [isLoading, setIsLoading] = useState(false);
-  // 保存状态
-  const [isSaving, setIsSaving] = useState<Record<string, boolean>>({});
-  // 编辑状态
+  // 三观模块-编辑状态
   const [editStatus, setEditStatus] = useState<Record<string, EditStatus>>({});
 
   // 当从服务器获取到三观数据时，更新状态
@@ -161,18 +162,25 @@ export const AdvisorView = () => {
 
     setScenario(scenario);
     setIsLoading(true);
+    setAdvice('');  // 清空之前的建议
     
     try {
-      // TODO: 调用 AI API 获取建议
-      // 这里模拟 API 调用
-      setTimeout(() => {
-        setAdvice('基于您的输入，我的建议是...');
-        setIsLoading(false);
-      }, 2000);
+      // 调用 AI 服务获取建议
+      const response = await getAIAdvice({
+        worldviews: {
+          worldview,
+          lifePhilosophy: lifeview,
+          values,
+        },
+        scenario,
+      });
+
+      setAdvice(response.content);
     } catch (error) {
       console.error('获取AI建议失败:', error);
-      setIsLoading(false);
       // toast.error('获取建议失败，请重试');
+    } finally {
+      setIsLoading(false);
     }
   };
 
