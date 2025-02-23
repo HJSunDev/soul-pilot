@@ -24,7 +24,7 @@ export const ScenarioInput = ({ onSubmit }: ScenarioInputProps) => {
     // 主容器：采用渐变背景和精致的阴影效果
     <div className="bg-linear-to-br from-white to-gray-50/80 rounded-2xl 
       shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] ring-1 ring-gray-900/5 
-      p-6 h-[20rem] flex flex-col">
+      p-6 h-[23rem] flex flex-col">
       {/* 标题区域：添加优雅的装饰元素 */}
       <div className="flex items-center space-x-3 mb-4">
         <div className="w-1.5 h-6 bg-linear-to-b from-indigo-500 to-purple-500 rounded-full"/>

@@ -166,16 +166,37 @@ export const AdvisorView = () => {
     
     try {
       // 调用 AI 服务获取建议
-      const response = await getAIAdvice({
-        worldviews: {
-          worldview,
-          lifePhilosophy: lifeview,
-          values,
-        },
-        scenario,
-      });
+      // const response = await getAIAdvice({
+      //   worldviews: {
+      //     worldview,
+      //     lifePhilosophy: lifeview,
+      //     values,
+      //   },
+      //   scenario,
+      // });
 
-      setAdvice(response.content);
+      // setAdvice(response.content);
+
+
+      // 模拟 API 调用延迟
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // 模拟 AI 建议内容
+      const mockAdvice = `我能理解您与父母吵架的困扰，家庭矛盾是每个人都可能遇到的挑战。在这种情况下，您可能感到情绪上受到了影响，希望能够找到一种符合您三观的解决方案。
+
+基于您的三观，您认为人与人之间需要相互尊重，且在人生中寻找自己是一种重要的成长过程。同时，您也看重经济独立和心理独立，认为修行需要去除种种妄念，使内心清净。在与父母发生矛盾时，建议您可以考虑以下方式来处理：
+
+首先，保持冷静并进行自我反省。在冷静下来的时候，可以反思自己在争吵中的言行举止，看看是否有什么地方可以改进以减少冲突。
+
+其次，与父母进行真诚的沟通。在冷静和理智的状态下，与父母坦诚地交流您的想法和感受，同时倾听他们的看法。尊重彼此的立场，并试图寻求共同的解决方案。
+
+另外，寻找适当的时间和方式进行沟通。选择一个适当的时间，避免在情绪激动或紧张的情况下进行沟通，可以减少冲突的可能性。
+
+最后，不断学习和成长。与父母的矛盾也可以成为您个人成长的机会，通过这样的挑战，您可以更深入地了解自己，并不断完善自己的沟通技巧和情绪管理能力。
+
+希望以上建议能够帮助您处理与父母的矛盾，建立更加和谐的家庭关系。如果需要进一步的支持或建议，可以随时与我分享。祝您一切顺利！`;
+
+      setAdvice(mockAdvice);
     } catch (error) {
       console.error('获取AI建议失败:', error);
       // toast.error('获取建议失败，请重试');
@@ -185,9 +206,9 @@ export const AdvisorView = () => {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 bg-red-200">
       {/* 三观输入区域 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start bg-blue-200">
         {viewpoints.map((viewpoint) => (
           <ViewpointPanel
             key={viewpoint.title}
@@ -200,7 +221,7 @@ export const AdvisorView = () => {
       </div>
 
       {/* 场景输入和建议显示 */}
-      <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 bg-green-200">
         <ScenarioInput onSubmit={handleScenarioSubmit} />
         <AdviceDisplay 
           advice={advice} 
