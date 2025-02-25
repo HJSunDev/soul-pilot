@@ -31,11 +31,12 @@ export const ViewpointPanel = ({
         onClick={() => !isLoading && setIsEditing(true)}
         className={`
           relative group h-[5.5rem]
-          bg-white/95 backdrop-blur-sm rounded-xl
-          border border-zinc-100/80
+          bg-gradient-to-br from-white/95 to-indigo-50/20 backdrop-blur-sm rounded-xl
+          border border-indigo-100/30
           transition-all duration-300 cursor-pointer
-          hover:bg-white/98 hover:shadow-lg hover:shadow-indigo-500/5
-          hover:border-indigo-100
+          hover:bg-gradient-to-br hover:from-white/98 hover:to-indigo-50/40
+          hover:shadow-lg hover:shadow-indigo-500/5
+          hover:border-indigo-200/50
           overflow-hidden
           ${isActive ? 'ring-1 ring-indigo-500/30' : ''}
           ${isLoading ? 'cursor-wait' : ''}
@@ -100,9 +101,9 @@ export const ViewpointPanel = ({
           {/* 内容状态指示器 */}
           {viewpoint.content && !isLoading && (
             <div className="absolute right-4 bottom-4 flex items-center gap-[2px]">
-              <span className="w-[3px] h-[3px] rounded-full bg-gray-300" />
-              <span className="w-[3px] h-[3px] rounded-full bg-gray-300" />
-              <span className="w-[3px] h-[3px] rounded-full bg-gray-300" />
+              <span className="w-[3px] h-[3px] rounded-full bg-indigo-200" />
+              <span className="w-[3px] h-[3px] rounded-full bg-indigo-200" />
+              <span className="w-[3px] h-[3px] rounded-full bg-indigo-200" />
             </div>
           )}
         </div>
@@ -110,7 +111,7 @@ export const ViewpointPanel = ({
         {/* 悬浮渐变效果 */}
         <div className={`
           absolute inset-0
-          bg-gradient-to-br from-indigo-50/30 via-transparent to-purple-50/30
+          bg-gradient-to-br from-indigo-50/40 via-transparent to-blue-50/40
           opacity-0 group-hover:opacity-100
           transition-opacity duration-500
           pointer-events-none

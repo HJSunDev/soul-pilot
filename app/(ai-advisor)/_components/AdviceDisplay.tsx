@@ -97,7 +97,7 @@ const LoadingAnimation = () => (
       <div className="absolute inset-0 flex items-center justify-center">
         <motion.div
           className="w-12 h-12 rounded-full bg-white flex items-center justify-center
-            shadow-[0_2px_12px_-2px_rgba(99,102,241,0.3)] border border-indigo-100"
+            shadow-[0_2px_12px_-2px_rgba(79,70,229,0.3)] border border-indigo-100"
           animate={{
             rotate: [0, 360],
           }}
@@ -109,7 +109,7 @@ const LoadingAnimation = () => (
         >
           <svg className="w-6 h-6 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-              d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+              d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
           </svg>
         </motion.div>
       </div>
@@ -123,7 +123,7 @@ const LoadingAnimation = () => (
     {/* 进度条动画 */}
     <div className="w-48 h-1 mt-8 rounded-full bg-gray-100 overflow-hidden">
       <motion.div
-        className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
+        className="h-full bg-gradient-to-r from-indigo-400 to-indigo-600"
         animate={{
           x: ['-100%', '100%'],
         }}
@@ -143,7 +143,7 @@ const EmptyState = () => (
     <div className="w-16 h-16 mb-6 relative">
       <div className="absolute inset-0 bg-indigo-100/50 rounded-full blur-xl animate-pulse"/>
       <div className="relative w-full h-full rounded-full bg-white flex items-center justify-center
-        shadow-[0_2px_12px_-2px_rgba(99,102,241,0.2)] border border-indigo-100">
+        shadow-[0_2px_12px_-2px_rgba(79,70,229,0.2)] border border-indigo-100">
         <svg className="w-8 h-8 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
             d="M8.625 9.75a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 01.778-.332 48.294 48.294 0 005.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
@@ -285,7 +285,7 @@ export const AdviceDisplay = ({
   const renderBriefCards = () => (
     <div className="space-y-3">
       {/* 心境剖析卡片 */}
-      <div className="rounded-xl bg-gradient-to-br from-indigo-50/40 to-purple-50/40 p-[1px]">
+      <div className="rounded-xl bg-gradient-to-br from-indigo-50/40 to-blue-50/40 p-[1px]">
         <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3">
           <div className="flex items-center space-x-2 mb-2">
             <svg className="w-3.5 h-3.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -313,10 +313,10 @@ export const AdviceDisplay = ({
       </div>
 
       {/* 行动指南卡片 */}
-      <div className="rounded-xl bg-gradient-to-br from-purple-50/40 to-indigo-50/40 p-[1px]">
+      <div className="rounded-xl bg-gradient-to-br from-blue-50/40 to-indigo-50/40 p-[1px]">
         <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3">
           <div className="flex items-center space-x-2 mb-2">
-            <svg className="w-3.5 h-3.5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-3.5 h-3.5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                 d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
             </svg>
@@ -325,7 +325,7 @@ export const AdviceDisplay = ({
           <div className="space-y-2">
             {suggestions.map((suggestion, index) => (
               <div key={index} className="flex items-start space-x-2">
-                <span className="flex-shrink-0 w-4 h-4 mt-0.5 rounded-full bg-purple-100 text-purple-600
+                <span className="flex-shrink-0 w-4 h-4 mt-0.5 rounded-full bg-blue-100 text-blue-600
                   flex items-center justify-center text-xs font-medium">
                   {index + 1}
                 </span>
@@ -341,8 +341,8 @@ export const AdviceDisplay = ({
   );
 
   return (
-    <div className="bg-white/95 backdrop-blur-sm rounded-xl 
-      border border-zinc-100/80 
+    <div className="bg-gradient-to-br from-white/95 to-indigo-50/30 backdrop-blur-sm rounded-xl 
+      border border-indigo-100/30 
       transition-all duration-300
       hover:bg-white/98 hover:shadow-lg hover:shadow-indigo-500/5
       hover:border-indigo-100

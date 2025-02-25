@@ -206,9 +206,9 @@ export const AdvisorView = () => {
   };
 
   return (
-    <div className="space-y-4 bg-red-200">
+    <div className="space-y-4">
       {/* 三观输入区域 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start bg-blue-200">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
         {viewpoints.map((viewpoint) => (
           <ViewpointPanel
             key={viewpoint.title}
@@ -221,7 +221,7 @@ export const AdvisorView = () => {
       </div>
 
       {/* 场景输入和建议显示 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 bg-green-200">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <ScenarioInput onSubmit={handleScenarioSubmit} />
         <AdviceDisplay 
           advice={advice} 
