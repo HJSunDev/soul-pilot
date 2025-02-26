@@ -8,6 +8,7 @@ import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { debounce } from 'lodash';
 // import { toast } from "sonner";
+import { Bot, Sparkles, BrainCircuit } from 'lucide-react';
 
 // 定义编辑状态类型
 export type EditStatus = 'editing' | 'saving' | 'saved' | 'error';
@@ -53,6 +54,8 @@ export const AdvisorView = () => {
   const [isLoading, setIsLoading] = useState(false);
   // 三观模块-编辑状态
   const [editStatus, setEditStatus] = useState<Record<string, EditStatus>>({});
+  // 机器人助手对话框状态
+  const [showBotHelper, setShowBotHelper] = useState(false);
 
   // 当从服务器获取到三观数据时，更新状态
   useEffect(() => {
@@ -205,19 +208,101 @@ export const AdvisorView = () => {
     }
   };
 
+  // 切换机器人助手对话框显示状态
+  const toggleBotHelper = () => {
+    setShowBotHelper(prev => !prev);
+  };
+
   return (
     <div className="space-y-4">
       {/* 三观输入区域 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-        {viewpoints.map((viewpoint) => (
-          <ViewpointPanel
-            key={viewpoint.title}
-            viewpoint={viewpoint}
-            onChange={(value) => handleViewpointChange(viewpoint.title, value)}
-            isLoading={worldviews === undefined}
-            editStatus={editStatus[viewpoint.title]}
-          />
-        ))}
+      <div className="relative">
+        {/* 机器人助手图标 - 位于整体左上角且有倾斜角度 */}
+        <div 
+          onClick={toggleBotHelper}
+          className="absolute -top-3 -left-3 z-10 cursor-pointer group"
+        >
+          <div className="bg-white p-2 rounded-full shadow-md hover:shadow-lg border border-indigo-100 transition-all duration-300 hover:scale-110">
+            <div className="animate-bounce-subtle">
+              <Bot 
+                size={24} 
+                className="text-indigo-500 group-hover:text-indigo-600 transition-colors" 
+              />
+            </div>
+          </div>
+          
+          {/* 悬浮提示 - 使用绝对定位确保正确显示 */}
+          <div className="absolute left-0 top-0 -mt-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-20">
+            <div className="bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap shadow-lg">
+              <div className="flex items-center gap-1.5">
+                <BrainCircuit size={12} className="text-indigo-300" />
+                <span>让我来帮你分辨三观</span>
+              </div>
+            </div>
+            <div className="w-2 h-2 bg-gray-800 transform rotate-45 absolute -bottom-1 left-3"></div>
+          </div>
+        </div>
+        
+        {/* 轻量级背景容器 - 为三观模块提供统一的背景 */}
+        <div className="bg-white/30 rounded-lg p-1 border border-indigo-50/30 overflow-hidden">
+          {/* 三观面板网格 */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+            {viewpoints.map((viewpoint) => (
+              <ViewpointPanel
+                key={viewpoint.title}
+                viewpoint={viewpoint}
+                onChange={(value) => handleViewpointChange(viewpoint.title, value)}
+                isLoading={worldviews === undefined}
+                editStatus={editStatus[viewpoint.title]}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* 机器人助手对话框 */}
+        {showBotHelper && (
+          <div className="absolute top-full left-0 mt-3 p-4 bg-white rounded-lg shadow-lg border border-indigo-100 z-20 w-full md:w-80 animate-fadeIn">
+            <div className="flex justify-between items-center mb-3">
+              <div className="flex items-center gap-1.5">
+                <div className="bg-indigo-100 p-1 rounded-full">
+                  <Bot size={16} className="text-indigo-600" />
+                </div>
+                <h3 className="text-base font-medium text-gray-900">三观分辨助手</h3>
+              </div>
+              <button 
+                onClick={toggleBotHelper}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            
+            <div className="bg-indigo-50/50 p-2.5 rounded-lg mb-3 border border-indigo-100/50">
+              <p className="text-gray-700 text-xs">
+                <span className="font-medium">提示：</span> 输入您的观念或想法，我将帮助您分析它属于世界观、人生观还是价值观。
+              </p>
+            </div>
+            
+            <div className="relative">
+              <textarea 
+                className="w-full border border-gray-200 rounded-lg p-2.5 pr-9 text-gray-700 text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all resize-none"
+                placeholder="输入您想分析的观念或想法..."
+                rows={2}
+              ></textarea>
+              <button className="absolute right-2.5 bottom-2.5 text-indigo-500 hover:text-indigo-600 transition-colors">
+                <Sparkles size={16} />
+              </button>
+            </div>
+            
+            <div className="mt-2 text-[10px] text-gray-500 flex items-center justify-between">
+              <span>目前处于开发阶段...</span>
+              <span className="text-indigo-500">由 AI 提供支持</span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 场景输入和建议显示 */}
