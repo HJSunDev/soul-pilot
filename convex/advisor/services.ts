@@ -32,7 +32,7 @@ ${worldviews.values ? `价值观：${worldviews.values}` : "价值观：未设�
 - 避免空泛的建议
 - 确保建议与用户的三观一致
 
-请严格按照以下JSON格式输出你的回答：
+你必须严格按照以下JSON格式输出你的回答，不要添加任何前缀或后缀，确保输出是有效的JSON：
 {
   "analysis": {
     "points": [
@@ -51,7 +51,7 @@ ${worldviews.values ? `价值观：${worldviews.values}` : "价值观：未设�
   "fullContent": "这里是完整的分析和建议内容，包括问题复述与共情、基于用户三观的深入分析、符合用户价值观的具体建议、可执行的行动计划等"
 }
 
-请确保输出格式严格遵循上述JSON结构，不要添加任何前缀或后缀。`;
+再次强调，你的回复必须是一个有效的JSON对象，不要添加任何其他文本。`;
 
   return basePrompt;
 }
@@ -170,8 +170,8 @@ export const getAdvice = action({
         messages,
         temperature: 0.5, // 降低温度以获得更一致的格式输出
         max_tokens: 2500,
-        response_format: { type: "json_object" }, // 指定JSON响应格式
       });
+
 
       // 提取AI回复内容
       const reply = completion.choices[0].message.content;

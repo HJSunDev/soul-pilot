@@ -4,9 +4,16 @@ import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// 定义结构化建议数据的接口
+interface StructuredAdvice {
+  analysis: { points: string[] };
+  actions: { points: string[] };
+  fullContent: string;
+}
+
 // AdviceDisplay组件的属性接口
 interface AdviceDisplayProps {
-  advice: string;        // AI建议内容
+  advice: string;        // AI建议内容（JSON字符串或普通文本）
   isLoading: boolean;    // 加载状态
   worldview: string;     // 世界观内容
   lifeview: string;      // 人生观内容
@@ -14,7 +21,55 @@ interface AdviceDisplayProps {
   scenario: string;      // 场景描述
 }
 
-// 提取关键观察和建议
+// 解析建议内容，返回结构化数据
+const parseAdvice = (adviceText: string): StructuredAdvice | null => {
+  if (!adviceText) return null;
+  
+  try {
+    // 尝试解析JSON
+    const parsed = JSON.parse(adviceText);
+    
+    // 验证解析后的对象是否符合预期结构
+    if (parsed && 
+        typeof parsed === 'object' && 
+        parsed.fullContent && 
+        typeof parsed.fullContent === 'string') {
+      
+      // 确保 analysis.points 和 actions.points 是数组
+      const analysis = parsed.analysis && Array.isArray(parsed.analysis.points) 
+        ? parsed.analysis 
+        : { points: [] };
+        
+      const actions = parsed.actions && Array.isArray(parsed.actions.points) 
+        ? parsed.actions 
+        : { points: [] };
+      
+      return {
+        analysis,
+        actions,
+        fullContent: parsed.fullContent
+      };
+    }
+    
+    // 如果结构不符合预期，返回降级处理的数据结构
+    console.warn('建议内容结构不符合预期，使用降级处理', parsed);
+    return {
+      analysis: { points: [] },
+      actions: { points: [] },
+      fullContent: typeof parsed === 'string' ? parsed : JSON.stringify(parsed)
+    };
+  } catch (e) {
+    // 如果解析失败，返回降级处理的数据结构
+    console.warn('建议内容解析失败，使用降级处理', e);
+    return {
+      analysis: { points: extractKeyPoints(adviceText) },
+      actions: { points: [] },
+      fullContent: adviceText
+    };
+  }
+};
+
+// 提取关键观察和建议（用于非结构化文本的降级处理）
 const extractKeyPoints = (text: string): string[] => {
   // 将文本按段落分割
   const paragraphs = text.split('\n').filter(p => p.trim());
@@ -172,33 +227,39 @@ const AdviceContent = ({
   setShowDetails: (show: boolean) => void;
   renderReferenceInfo: () => ReactNode;
   renderBriefCards: () => ReactNode;
-}) => (
-  <div className="flex flex-col h-full relative">
-    {renderReferenceInfo()}
-    {!showDetails ? (
-      <>
-        <div className="flex-1 p-6 pb-16">
-          <div className="h-full flex flex-col justify-between">
-            {renderBriefCards()}
+}) => {
+  // 解析建议内容
+  const structuredAdvice = parseAdvice(advice);
+  const fullContent = structuredAdvice ? structuredAdvice.fullContent : advice;
+  
+  return (
+    <div className="flex flex-col h-full relative">
+      {renderReferenceInfo()}
+      {!showDetails ? (
+        <>
+          <div className="flex-1 p-6 pb-16">
+            <div className="h-full flex flex-col justify-between">
+              {renderBriefCards()}
+            </div>
           </div>
-        </div>
-        <ExpandButton isExpanded={false} onClick={() => setShowDetails(true)} />
-      </>
-    ) : (
-      <>
-        <div className="flex-1 overflow-hidden">
-          <div className="h-full p-6 pb-16 overflow-y-auto
-            scrollbar-thin scrollbar-thumb-gray-200/80 scrollbar-track-transparent">
-            <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
-              {advice}
-            </p>
+          <ExpandButton isExpanded={false} onClick={() => setShowDetails(true)} />
+        </>
+      ) : (
+        <>
+          <div className="flex-1 overflow-hidden">
+            <div className="h-full p-6 pb-16 overflow-y-auto
+              scrollbar-thin scrollbar-thumb-gray-200/80 scrollbar-track-transparent">
+              <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
+                {fullContent}
+              </p>
+            </div>
           </div>
-        </div>
-        <ExpandButton isExpanded={true} onClick={() => setShowDetails(false)} />
-      </>
-    )}
-  </div>
-);
+          <ExpandButton isExpanded={true} onClick={() => setShowDetails(false)} />
+        </>
+      )}
+    </div>
+  );
+};
 
 // AdviceDisplay组件:用于展示AI建议内容
 export const AdviceDisplay = ({
@@ -212,8 +273,9 @@ export const AdviceDisplay = ({
   const [showReference, setShowReference] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
 
-  const insights = extractKeyPoints(advice || '');
-  const suggestions = extractKeyPoints(advice?.split('建议您可以考虑以下方式来处理')[1] || '');
+  const structuredAdvice = parseAdvice(advice);
+  const insights = structuredAdvice?.analysis.points || extractKeyPoints(advice || '');
+  const suggestions = structuredAdvice?.actions.points || extractKeyPoints(advice?.split('建议您可以考虑以下方式来处理')[1] || '');
 
   // 渲染参考信息按钮和面板
   const renderReferenceInfo = () => (
