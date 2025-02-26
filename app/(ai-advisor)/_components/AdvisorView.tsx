@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { ViewpointPanel } from './ViewpointPanel';
 import { ScenarioInput } from './ScenarioInput';
 import { AdviceDisplay } from './AdviceDisplay';
@@ -18,6 +18,13 @@ export interface Viewpoint {
   title: string;      // 三观类型标题
   description: string; // 引导性描述
   content: string;    // 用户输入的内容
+}
+
+// 定义三观分析结果接口
+interface ViewpointAnalysisResult {
+  type: '世界观' | '人生观' | '价值观';
+  percentage: number;
+  explanation: string;
 }
 
 // 获取字段名映射
@@ -56,6 +63,12 @@ export const AdvisorView = () => {
   const [editStatus, setEditStatus] = useState<Record<string, EditStatus>>({});
   // 机器人助手对话框状态
   const [showBotHelper, setShowBotHelper] = useState(false);
+  
+  // 三观分辨助手状态
+  const [viewpointInput, setViewpointInput] = useState('');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisResults, setAnalysisResults] = useState<ViewpointAnalysisResult[] | null>(null);
+  const viewpointInputRef = useRef<HTMLTextAreaElement>(null);
 
   // 当从服务器获取到三观数据时，更新状态
   useEffect(() => {
@@ -211,6 +224,51 @@ export const AdvisorView = () => {
   // 切换机器人助手对话框显示状态
   const toggleBotHelper = () => {
     setShowBotHelper(prev => !prev);
+    // 重置分析结果
+    if (!showBotHelper) {
+      setAnalysisResults(null);
+      setViewpointInput('');
+      // 聚焦输入框
+      setTimeout(() => {
+        viewpointInputRef.current?.focus();
+      }, 100);
+    }
+  };
+  
+  // 处理三观分析提交
+  const handleViewpointAnalysis = async () => {
+    if (!viewpointInput.trim()) return;
+    
+    setIsAnalyzing(true);
+    
+    try {
+      // 模拟 AI 分析过程
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // 这里应该调用实际的 AI 服务进行分析
+      // 目前使用模拟数据
+      const mockResults: ViewpointAnalysisResult[] = [
+        {
+          type: '世界观',
+          percentage: Math.floor(Math.random() * 60) + 40, // 40-100%
+          explanation: '这个想法主要反映了您对世界本质和规律的理解。'
+        },
+        {
+          type: '人生观',
+          percentage: Math.floor(Math.random() * 30) + 5, // 5-35%
+          explanation: '略微涉及到您对人生意义的思考。'
+        }
+      ];
+      
+      // 按百分比排序
+      mockResults.sort((a, b) => b.percentage - a.percentage);
+      
+      setAnalysisResults(mockResults);
+    } catch (error) {
+      console.error('分析失败:', error);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   return (
@@ -261,45 +319,102 @@ export const AdvisorView = () => {
 
         {/* 机器人助手对话框 */}
         {showBotHelper && (
-          <div className="absolute top-full left-0 mt-3 p-4 bg-white rounded-lg shadow-lg border border-indigo-100 z-20 w-full md:w-80 animate-fadeIn">
-            <div className="flex justify-between items-center mb-3">
-              <div className="flex items-center gap-1.5">
-                <div className="bg-indigo-100 p-1 rounded-full">
-                  <Bot size={16} className="text-indigo-600" />
+          <div className="absolute -top-2 left-8 bg-white rounded-lg shadow-lg border border-gray-200/60 z-20 w-72 animate-fadeIn overflow-hidden">
+            {/* 连接线 */}
+            <div className="absolute -left-2 top-3 w-2 h-2 bg-white transform rotate-45 border-l border-b border-gray-200/60"></div>
+            
+            {/* 标题栏 */}
+            <div className="flex justify-between items-center px-4 py-3 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <div className="text-indigo-500 opacity-90">
+                  <BrainCircuit size={16} />
                 </div>
-                <h3 className="text-base font-medium text-gray-900">三观分辨助手</h3>
+                <h3 className="text-sm font-medium text-gray-700">三观分辨助手</h3>
               </div>
               <button 
                 onClick={toggleBotHelper}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100 p-1"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
               </button>
             </div>
             
-            <div className="bg-indigo-50/50 p-2.5 rounded-lg mb-3 border border-indigo-100/50">
-              <p className="text-gray-700 text-xs">
-                <span className="font-medium">提示：</span> 输入您的观念或想法，我将帮助您分析它属于世界观、人生观还是价值观。
-              </p>
-            </div>
-            
-            <div className="relative">
-              <textarea 
-                className="w-full border border-gray-200 rounded-lg p-2.5 pr-9 text-gray-700 text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all resize-none"
-                placeholder="输入您想分析的观念或想法..."
-                rows={2}
-              ></textarea>
-              <button className="absolute right-2.5 bottom-2.5 text-indigo-500 hover:text-indigo-600 transition-colors">
-                <Sparkles size={16} />
-              </button>
-            </div>
-            
-            <div className="mt-2 text-[10px] text-gray-500 flex items-center justify-between">
-              <span>目前处于开发阶段...</span>
-              <span className="text-indigo-500">由 AI 提供支持</span>
+            {/* 内容区域 */}
+            <div className="p-4">
+              {/* 输入区域 */}
+              <div className="relative mb-4">
+                <textarea 
+                  ref={viewpointInputRef}
+                  value={viewpointInput}
+                  onChange={(e) => setViewpointInput(e.target.value)}
+                  className="w-full border border-gray-200 rounded-lg p-3 pr-10 text-gray-700 text-xs focus:outline-none focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 transition-all resize-none shadow-sm"
+                  placeholder="输入您想分析的观念或想法..."
+                  rows={3}
+                  disabled={isAnalyzing}
+                ></textarea>
+                <button 
+                  onClick={handleViewpointAnalysis}
+                  disabled={isAnalyzing || !viewpointInput.trim()}
+                  className={`absolute right-3 bottom-3 p-1.5 rounded-full transition-all ${
+                    isAnalyzing || !viewpointInput.trim() 
+                      ? 'text-gray-300 cursor-not-allowed' 
+                      : 'text-indigo-500 hover:text-indigo-600 hover:bg-indigo-50 cursor-pointer'
+                  }`}
+                >
+                  {isAnalyzing ? (
+                    <div className="w-4 h-4 border-2 border-gray-200 border-t-indigo-500 rounded-full animate-spin"></div>
+                  ) : (
+                    <Sparkles size={16} />
+                  )}
+                </button>
+              </div>
+              
+              {/* 结果显示区域 - 有结果时显示 */}
+              {analysisResults && analysisResults.length > 0 && (
+                <div className="bg-gray-50/70 rounded-lg p-3 animate-fadeIn">
+                  <h4 className="text-xs font-medium text-gray-700 mb-2.5 flex items-center gap-1.5">
+                    <div className="text-indigo-500 opacity-80">
+                      <BrainCircuit size={12} />
+                    </div>
+                    分析结果
+                  </h4>
+                  <div className="space-y-2.5">
+                    {/* 结果项 - 动态生成 */}
+                    {analysisResults.map((result, index) => (
+                      <div 
+                        key={result.type}
+                        className={`bg-white rounded-md p-2.5 shadow-sm ${
+                          index > 0 ? `opacity-${Math.max(60, 100 - index * 15)}` : ''
+                        }`}
+                      >
+                        <div className="flex items-center gap-1.5 mb-1.5">
+                          <div className={`w-2 h-2 rounded-full ${
+                            result.type === '世界观' ? 'bg-indigo-400' : 
+                            result.type === '人生观' ? 'bg-purple-400' : 'bg-amber-400'
+                          }`}></div>
+                          <span className="text-xs font-medium text-gray-700">{result.type}</span>
+                          <div className="flex-1 mx-1.5 h-1 bg-gray-100 rounded-full overflow-hidden">
+                            <div 
+                              className={`h-full rounded-full ${
+                                result.type === '世界观' ? 'bg-indigo-400' : 
+                                result.type === '人生观' ? 'bg-purple-400' : 'bg-amber-400'
+                              }`}
+                              style={{ width: `${result.percentage}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-[10px] text-gray-500 font-medium">{result.percentage}%</span>
+                        </div>
+                        <p className="text-[10px] text-gray-600 pl-3.5">
+                          {result.explanation}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
