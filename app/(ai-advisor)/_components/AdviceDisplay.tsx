@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import type { ReactNode } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 // 定义结构化建议数据的接口
 interface StructuredAdvice {
@@ -15,10 +15,6 @@ interface StructuredAdvice {
 interface AdviceDisplayProps {
   advice: string;        // AI建议内容（JSON字符串或普通文本）
   isLoading: boolean;    // 加载状态
-  worldview: string;     // 世界观内容
-  lifeview: string;      // 人生观内容
-  values: string;        // 价值观内容
-  scenario: string;      // 场景描述
 }
 
 // 解析建议内容，返回结构化数据
@@ -219,13 +215,11 @@ const AdviceContent = ({
   advice,
   showDetails,
   setShowDetails,
-  renderReferenceInfo,
   renderBriefCards,
 }: {
   advice: string;
   showDetails: boolean;
   setShowDetails: (show: boolean) => void;
-  renderReferenceInfo: () => ReactNode;
   renderBriefCards: () => ReactNode;
 }) => {
   // 解析建议内容
@@ -233,11 +227,10 @@ const AdviceContent = ({
   const fullContent = structuredAdvice ? structuredAdvice.fullContent : advice;
   
   return (
-    <div className="flex flex-col h-full relative">
-      {renderReferenceInfo()}
+    <div className="flex flex-col h-full relative group">
       {!showDetails ? (
         <>
-          <div className="flex-1 p-6 pb-16">
+          <div className="flex-1 p-6 pb-16 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200/80 scrollbar-track-transparent">
             <div className="h-full flex flex-col justify-between">
               {renderBriefCards()}
             </div>
@@ -265,87 +258,16 @@ const AdviceContent = ({
 export const AdviceDisplay = ({
   advice,
   isLoading,
-  worldview,
-  lifeview,
-  values,
-  scenario,
 }: AdviceDisplayProps) => {
-  const [showReference, setShowReference] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
 
   const structuredAdvice = parseAdvice(advice);
   const insights = structuredAdvice?.analysis.points || extractKeyPoints(advice || '');
   const suggestions = structuredAdvice?.actions.points || extractKeyPoints(advice?.split('建议您可以考虑以下方式来处理')[1] || '');
 
-  // 渲染参考信息按钮和面板
-  const renderReferenceInfo = () => (
-    <>
-      <div className={`absolute right-3 transition-all duration-300 z-30
-        ${showReference ? 'top-[4.5rem]' : 'top-3'}`}>
-        <button
-          onClick={() => setShowReference(!showReference)}
-          className="px-2 py-1 text-xs text-gray-400 hover:text-gray-600
-            transition-colors flex items-center space-x-1"
-        >
-          <span>参考信息</span>
-          <svg 
-            className={`w-3 h-3 transition-transform ${showReference ? 'rotate-180' : ''}`}
-            fill="none" 
-            viewBox="0 0 24 24" 
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
-      </div>
-
-      <AnimatePresence>
-        {showReference && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="absolute top-0 left-0 right-0 z-20 bg-white/95 backdrop-blur-sm
-              border-b border-zinc-100/80 shadow-sm"
-          >
-            <div className="px-6 py-4">
-              <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
-                {worldview && (
-                  <div className="flex items-center space-x-1 truncate">
-                    <span className="text-gray-400 shrink-0">世界观：</span>
-                    <span className="text-gray-600 truncate">{worldview.slice(0, 30)}...</span>
-                  </div>
-                )}
-                {lifeview && (
-                  <div className="flex items-center space-x-1 truncate">
-                    <span className="text-gray-400 shrink-0">人生观：</span>
-                    <span className="text-gray-600 truncate">{lifeview.slice(0, 30)}...</span>
-                  </div>
-                )}
-                {values && (
-                  <div className="flex items-center space-x-1 truncate">
-                    <span className="text-gray-400 shrink-0">价值观：</span>
-                    <span className="text-gray-600 truncate">{values.slice(0, 30)}...</span>
-                  </div>
-                )}
-                {scenario && (
-                  <div className="flex items-center space-x-1 truncate">
-                    <span className="text-gray-400 shrink-0">当前场景：</span>
-                    <span className="text-gray-600 truncate">{scenario.slice(0, 30)}...</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
-  );
-
   // 渲染简要信息卡片
   const renderBriefCards = () => (
-    <div className="space-y-3">
+    <div className="space-y-3 overflow-y-auto max-h-full scrollbar-thin scrollbar-thumb-gray-200/80 scrollbar-track-transparent">
       {/* 心境剖析卡片 */}
       <div className="rounded-xl bg-gradient-to-br from-indigo-50/40 to-blue-50/40 p-[1px]">
         <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3">
@@ -365,7 +287,7 @@ export const AdviceDisplay = ({
                   flex items-center justify-center text-xs font-medium">
                   {index + 1}
                 </span>
-                <p className="text-xs text-gray-600 leading-relaxed flex-1 line-clamp-1">
+                <p className="text-xs text-gray-600 leading-relaxed flex-1 line-clamp-1 group-hover:line-clamp-none transition-all duration-200">
                   {insight}
                 </p>
               </div>
@@ -391,7 +313,7 @@ export const AdviceDisplay = ({
                   flex items-center justify-center text-xs font-medium">
                   {index + 1}
                 </span>
-                <p className="text-xs text-gray-600 leading-relaxed flex-1 line-clamp-1">
+                <p className="text-xs text-gray-600 leading-relaxed flex-1 line-clamp-1 group-hover:line-clamp-none transition-all duration-200">
                   {suggestion}
                 </p>
               </div>
@@ -409,7 +331,7 @@ export const AdviceDisplay = ({
       hover:bg-white/98 hover:shadow-lg hover:shadow-indigo-500/5
       hover:border-indigo-100
       h-[23rem] flex flex-col overflow-hidden
-      relative">
+      relative group">
       
       {/* 根据不同状态渲染不同内容 */}
       {!advice && !isLoading ? (
@@ -421,7 +343,6 @@ export const AdviceDisplay = ({
           advice={advice}
           showDetails={showDetails}
           setShowDetails={setShowDetails}
-          renderReferenceInfo={renderReferenceInfo}
           renderBriefCards={renderBriefCards}
         />
       )}

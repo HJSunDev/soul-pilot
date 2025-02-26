@@ -8,6 +8,13 @@ import { z } from "zod";
 import { action } from "../_generated/server";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 
+// 定义用户三观信息的接口类型
+interface Worldviews {
+  worldview?: string;      // 用户的世界观
+  lifePhilosophy?: string; // 用户的人生观
+  values?: string;         // 用户的价值观
+}
+
 // 使用 Zod 定义结构化输出的模式
 const adviceOutputSchema = z.object({
   analysis: z.object({

@@ -226,10 +226,6 @@ export const AdvisorView = () => {
         <AdviceDisplay 
           advice={advice} 
           isLoading={isLoading}
-          worldview={worldview}
-          lifeview={lifeview}
-          values={values}
-          scenario={scenario}
         />
       </div>
     </div>
