@@ -15,15 +15,93 @@ interface Worldviews {
   values?: string;         // 用户的价值观
 }
 
+// 定义模型配置接口
+interface ModelConfig {
+  modelName: string;       // 模型名称
+  provider: string;        // 提供商
+  baseURL?: string;        // API基础URL
+  temperature: number;     // 温度参数
+  maxTokens: number;       // 最大token数
+  description: string;     // 模型描述
+}
+
+// 定义可用模型列表
+const AVAILABLE_MODELS: Record<string, ModelConfig> = {
+  "gpt-3.5-turbo": {
+    modelName: "gpt-3.5-turbo",
+    provider: "openai",
+    baseURL: "https://openrouter.ai/api/v1",
+    temperature: 0.7,
+    maxTokens: 2000,
+    description: "OpenAI GPT-3.5 Turbo - 快速响应，适合一般场景分析"
+  },
+  "gpt-4o": {
+    modelName: "gpt-4o",
+    provider: "openai",
+    baseURL: "https://openrouter.ai/api/v1",
+    temperature: 0.5,
+    maxTokens: 4000,
+    description: "OpenAI GPT-4o - 强大的多模态模型，适合复杂分析和推理"
+  },
+  "claude-3-5-sonnet": {
+    modelName: "claude-3-5-sonnet",
+    provider: "anthropic",
+    baseURL: "https://openrouter.ai/api/v1",
+    temperature: 0.5,
+    maxTokens: 4000,
+    description: "Anthropic Claude 3.5 Sonnet - 擅长深度分析和情感理解，平衡速度与智能"
+  },
+  "claude-3-7-sonnet": {
+    modelName: "claude-3-7-sonnet",
+    provider: "anthropic",
+    baseURL: "https://openrouter.ai/api/v1",
+    temperature: 0.5,
+    maxTokens: 4000,
+    description: "Anthropic Claude 3.7 Sonnet - 最新的Claude模型，提供更高级的推理和理解能力"
+  },
+  "deepseek-v3": {
+    modelName: "deepseek-v3",
+    provider: "deepseek",
+    baseURL: "https://openrouter.ai/api/v1",
+    temperature: 0.6,
+    maxTokens: 3000,
+    description: "DeepSeek V3 - 灵活多任务模型，适合多语言和创意内容生成"
+  },
+  "deepseek-r1": {
+    modelName: "deepseek-r1",
+    provider: "deepseek",
+    baseURL: "https://openrouter.ai/api/v1",
+    temperature: 0.4,
+    maxTokens: 3000,
+    description: "DeepSeek R1 - 强化学习模型，擅长复杂推理和逻辑分析"
+  }
+};
+
+// 默认模型ID
+const DEFAULT_MODEL_ID = "gpt-4o";
+
 // 使用 Zod 定义结构化输出的模式
 const adviceOutputSchema = z.object({
   analysis: z.object({
-    points: z.array(z.string()).length(3).describe("三个心境剖析要点"),
+    points: z.array(z.string()).length(3).describe("三个心境剖析要点，分析用户在当前场景中的心理需求和深层心理状态"),
   }),
   actions: z.object({
-    points: z.array(z.string()).length(3).describe("三个行动指南要点"),
+    points: z.array(z.string()).length(3).describe("三个行动指南要点，基于用户三观提供的具体可行建议"),
   }),
   fullContent: z.string().describe("完整的分析和建议内容"),
+});
+
+// 获取可用模型列表的API
+export const getAvailableModels = action({
+  handler: async () => {
+    // 返回所有可用模型的基本信息
+    return Object.entries(AVAILABLE_MODELS).map(([id, config]) => ({
+      id,
+      name: config.modelName,
+      provider: config.provider,
+      description: config.description
+    }));
+  }
 });
 
 // 根据用户三观和场景提供个性化建议的API接口
@@ -44,13 +122,21 @@ export const getAdvice = action({
     }
 
     try {
+      // 使用默认模型配置
+      const modelId = DEFAULT_MODEL_ID;
+      const modelConfig = AVAILABLE_MODELS[modelId];
+      
+      if (!modelConfig) {
+        throw new Error(`未找到ID为 ${modelId} 的模型配置`);
+      }
+
       // 创建结构化输出解析器
       const parser = StructuredOutputParser.fromZodSchema(adviceOutputSchema);
       const formatInstructions = parser.getFormatInstructions();
 
       // 创建提示模板
       const promptTemplate = PromptTemplate.fromTemplate(`
-你是一个专业的人生顾问，你需要基于用户的三观，给出符合其价值观的建议。
+你是一个专业的人生顾问，你需要通过用户的三观来了解用户这个人，然后分析用户在特定场景中的心理需求和深层心理状态。
 
 用户的三观信息如下：
 世界观：{worldview}
@@ -61,16 +147,22 @@ export const getAdvice = action({
 {scenario}
 
 你的主要职责是：
-1. 倾听用户的困惑和问题
-2. 基于用户的三观进行分析
-3. 帮助用户找到符合其价值观的解决方案
-4. 给出具体可行的行动建议
+1. 通过用户的三观深入理解用户的思维方式和价值取向
+2. 分析用户在当前场景中的心理需求和深层心理状态（不是分析三观本身）
+3. 识别用户在这个场景中可能面临的内在冲突和情感挑战
+4. 给出符合用户三观的具体可行的行动建议
 
-请注意：
-- 保持专业、同理心和积极的态度
-- 给出具体、可操作的建议
-- 避免空泛的建议
-- 确保建议与用户的三观一致
+心境剖析部分：
+- 专注于用户在当前场景中的心理需求和情感状态
+- 挖掘用户可能没有意识到的深层心理动机
+- 分析用户在这个场景中的内在冲突和情感挑战
+- 不要分析用户的三观本身，而是基于三观来理解用户
+
+行动建议部分：
+- 给出符合用户三观的具体、可操作的建议
+- 建议应该帮助用户解决当前场景中的实际问题
+- 确保建议与用户的价值观和世界观一致
+- 避免空泛的建议，注重实用性和可行性
 
 {format_instructions}
       `);
@@ -78,13 +170,13 @@ export const getAdvice = action({
       // 初始化 ChatOpenAI 模型
       const model = new ChatOpenAI({
         openAIApiKey: apiKey,
-        modelName: "gpt-4",
-        temperature: 0.5,
-        maxTokens: 2500,
-        // 使用 OpenRouter 作为代理
-        configuration: {
-          baseURL: "https://openrouter.ai/api/v1",
-        },
+        modelName: modelConfig.modelName,
+        temperature: modelConfig.temperature,
+        maxTokens: modelConfig.maxTokens,
+        // 使用配置的基础URL
+        configuration: modelConfig.baseURL ? {
+          baseURL: modelConfig.baseURL,
+        } : undefined,
       });
 
       // 创建字符串输出解析器
@@ -114,6 +206,11 @@ export const getAdvice = action({
             actions: structuredOutput.actions,
             fullContent: structuredOutput.fullContent,
           },
+          modelUsed: {
+            id: modelId,
+            name: modelConfig.modelName,
+            provider: modelConfig.provider
+          },
           timestamp: new Date().toISOString(),
           status: "success",
           isStructured: true,
@@ -127,6 +224,11 @@ export const getAdvice = action({
             analysis: { points: [] },
             actions: { points: [] },
             fullContent: responseText || "无法解析AI回复",
+          },
+          modelUsed: {
+            id: modelId,
+            name: modelConfig.modelName,
+            provider: modelConfig.provider
           },
           timestamp: new Date().toISOString(),
           status: "success",
