@@ -43,32 +43,24 @@ const AVAILABLE_MODELS: Record<string, ModelConfig> = {
     maxTokens: 4000,
     description: "OpenAI GPT-4o - 强大的多模态模型，适合复杂分析和推理"
   },
-  "claude-3-5-sonnet": {
-    modelName: "claude-3-5-sonnet",
-    provider: "anthropic",
-    baseURL: "https://openrouter.ai/api/v1",
-    temperature: 0.5,
-    maxTokens: 4000,
-    description: "Anthropic Claude 3.5 Sonnet - 擅长深度分析和情感理解，平衡速度与智能"
-  },
   "claude-3-7-sonnet": {
-    modelName: "claude-3-7-sonnet",
+    modelName: "anthropic/claude-3-7-sonnet",
     provider: "anthropic",
     baseURL: "https://openrouter.ai/api/v1",
     temperature: 0.5,
     maxTokens: 4000,
     description: "Anthropic Claude 3.7 Sonnet - 最新的Claude模型，提供更高级的推理和理解能力"
   },
-  "deepseek-v3": {
-    modelName: "deepseek-v3",
-    provider: "deepseek",
+  "claude-3.5-sonnet": {
+    modelName: "anthropic/claude-3.5-sonnet",
+    provider: "anthropic",
     baseURL: "https://openrouter.ai/api/v1",
-    temperature: 0.6,
-    maxTokens: 3000,
-    description: "DeepSeek V3 - 灵活多任务模型，适合多语言和创意内容生成"
+    temperature: 0.5,
+    maxTokens: 4000,
+    description: "Anthropic Claude 3.5 Sonnet - 擅长深度分析和情感理解，平衡速度与智能"
   },
   "deepseek-r1": {
-    modelName: "deepseek-r1",
+    modelName: "deepseek/deepseek-r1",
     provider: "deepseek",
     baseURL: "https://openrouter.ai/api/v1",
     temperature: 0.4,
@@ -78,7 +70,7 @@ const AVAILABLE_MODELS: Record<string, ModelConfig> = {
 };
 
 // 默认模型ID
-const DEFAULT_MODEL_ID = "gpt-4o";
+const DEFAULT_MODEL_ID = "claude-3-7-sonnet";
 
 // 使用 Zod 定义结构化输出的模式
 const adviceOutputSchema = z.object({
