@@ -66,11 +66,27 @@ const AVAILABLE_MODELS: Record<string, ModelConfig> = {
     temperature: 0.4,
     maxTokens: 3000,
     description: "DeepSeek R1 - 强化学习模型，擅长复杂推理和逻辑分析"
+  },
+  "deepseek-v3": {
+    modelName: "deepseek/deepseek-chat",
+    provider: "deepseek",
+    baseURL: "https://openrouter.ai/api/v1",
+    temperature: 0.5,
+    maxTokens: 4000,
+    description: "DeepSeek V3 - 最新的DeepSeek模型，提供更强的语言理解和推理能力，适合复杂场景分析"
+  },
+  "deepseek-v3-free": {
+    modelName: "deepseek/deepseek-chat:free",
+    provider: "deepseek",
+    baseURL: "https://openrouter.ai/api/v1",
+    temperature: 0.5,
+    maxTokens: 3000,
+    description: "DeepSeek Chat 免费版 - DeepSeek的免费对话模型，提供基础的对话和推理能力"
   }
 };
 
 // 默认模型ID
-const DEFAULT_MODEL_ID = "claude-3-7-sonnet";
+const DEFAULT_MODEL_ID = "deepseek-v3-free";
 
 // 使用 Zod 定义结构化输出的模式
 const adviceOutputSchema = z.object({
