@@ -1,6 +1,8 @@
 import { query } from "../_generated/server";
 import { v } from "convex/values";
 
+import { AVAILABLE_MODELS } from "./model";
+
 /**
  * 获取当前用户的三观信息
  * 
@@ -48,3 +50,18 @@ export const getTargetUserWorldviews = query({
     return worldviews;
   },
 });
+
+
+// 获取可用模型列表的API
+export const getAvailableModels = query({
+  handler: async () => {
+    // 返回所有可用模型的基本信息
+    return Object.entries(AVAILABLE_MODELS).map(([id, config]) => ({
+      id,
+      name: config.modelName,
+      provider: config.provider,
+      description: config.description
+    }));
+  }
+});
+
