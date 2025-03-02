@@ -5,7 +5,7 @@ import { useState, useCallback } from 'react';
 import { EmotionRecorder } from '../_components/EmotionRecorder';
 import { EmotionAIAnalysis } from '../_components/EmotionAIAnalysis';
 import { EmotionHistory } from '../_components/EmotionHistory';
-import { BackHomeButton } from '@/app/_components/BackHomeButton';
+import { Navbar } from '@/app/_components/Navbar';
 import { SideNav } from '@/app/_components/SideNav';
 import { getNavModules } from '@/app/_config/navigation';
 
@@ -124,8 +124,8 @@ export default function EmotionArchivePage() {
         </div>
       </div>
 
-      {/* 返回主页按钮 */}
-      <BackHomeButton theme="rose" />
+      {/* 导航栏 */}
+      <Navbar theme="rose" />
 
       {/* 侧边导航栏 */}
       <SideNav modules={getNavModules('emotion-archive')} theme="rose" />

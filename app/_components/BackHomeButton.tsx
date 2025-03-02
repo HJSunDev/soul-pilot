@@ -39,7 +39,7 @@ export function BackHomeButton({
   const colors = themeColors[theme];
 
   return (
-    <div className={`fixed top-5 left-5 z-50 ${className}`}>
+    <div className={className}>
       <Link
         href="/"
         className={`group relative flex items-center gap-2 rounded-full bg-white/90 pl-2.5 pr-3.5 py-1.5 shadow-md ring-1 ring-gray-900/5 backdrop-blur-md transition-all duration-300 hover:bg-white hover:${colors.shadow} hover:-translate-y-0.5 active:translate-y-0 active:shadow-lg`}

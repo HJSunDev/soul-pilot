@@ -1,13 +1,16 @@
 'use client';
 
 import { AdvisorView } from '../_components/AdvisorView';
-import { BackHomeButton } from '@/app/_components/BackHomeButton';
+import { Navbar } from '@/app/_components/Navbar';
 import { SideNav } from '@/app/_components/SideNav';
 import { getNavModules } from '@/app/_config/navigation';
 
 export default function AdvisorPage() {
   return (
     <div className="flex flex-col h-screen bg-linear-to-b from-white to-indigo-50/30">
+      {/* 导航栏 */}
+      <Navbar theme="indigo" />
+      
       {/* 主要内容区域 */}
       <div className="h-full w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col justify-center">
         {/* 页面标题和描述 */}
@@ -24,9 +27,6 @@ export default function AdvisorPage() {
         {/* 核心功能组件 */}
         <AdvisorView />
       </div>
-
-      {/* 返回主页按钮 */}
-      <BackHomeButton theme="indigo" />
 
       {/* 侧边导航栏 */}
       <SideNav modules={getNavModules('value-compass')} theme="indigo" />
