@@ -1,7 +1,7 @@
 import { query } from "../_generated/server";
 import { v } from "convex/values";
 
-import { AVAILABLE_MODELS } from "./model";
+import { AVAILABLE_MODELS, MODELS_BY_PROVIDER } from "./model";
 
 /**
  * 获取当前用户的三观信息
@@ -55,13 +55,20 @@ export const getTargetUserWorldviews = query({
 // 获取可用模型列表的API
 export const getAvailableModels = query({
   handler: async () => {
-    // 返回所有可用模型的基本信息
-    return Object.entries(AVAILABLE_MODELS).map(([id, config]) => ({
-      id,
-      name: config.modelName,
-      provider: config.provider,
-      description: config.description
-    }));
+    // 直接返回所有可用模型
+    return AVAILABLE_MODELS;
+  }
+});
+
+/**
+ * 获取按服务商分类的模型列表
+ * 
+ * @returns 返回按服务商分类的模型信息
+ */
+export const getModelsByProvider = query({
+  handler: async () => {
+    // 直接返回按服务商分类的模型数据
+    return MODELS_BY_PROVIDER;
   }
 });
 

@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
+import { useQuery } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 
 interface ModelSelectorProps {
   theme?: 'rose' | 'indigo' | 'default';
@@ -25,14 +27,17 @@ export function ModelSelector({
   onModelSelect
 }: ModelSelectorProps) {
   const [showModelPanel, setShowModelPanel] = useState(false);
-  const [selectedProvider, setSelectedProvider] = useState('default');
-  const [selectedModel, setSelectedModel] = useState('GPT-4');
+  const [selectedProvider, setSelectedProvider] = useState('free');
+  const [selectedModel, setSelectedModel] = useState('DeepSeek Chat 免费版');
   const [showOpenRouterKey, setShowOpenRouterKey] = useState(false);
   const [showSiliconFlowKey, setShowSiliconFlowKey] = useState(false);
   
   // 添加点击外部关闭面板的功能
   const modelPanelRef = useRef<HTMLDivElement>(null);
   const modelButtonRef = useRef<HTMLDivElement>(null);
+
+  // 获取模型数据
+  const modelsByProvider = useQuery(api.advisor.queries.getModelsByProvider);
 
   // 模型提供商列表
   const modelProviders: ModelProvider[] = [
@@ -42,14 +47,11 @@ export function ModelSelector({
       needsKey: true,
       apiKey: '••••••••••••••••',
       website: 'https://openrouter.ai',
-      models: [
-        { id: 'openai/gpt-4-turbo', name: 'GPT-4 Turbo', description: 'OpenAI最新的大型模型' },
-        { id: 'anthropic/claude-3-opus', name: 'Claude 3 Opus', description: 'Anthropic最强大的模型' },
-        { id: 'anthropic/claude-3-sonnet', name: 'Claude 3 Sonnet', description: '平衡性能和速度' },
-        { id: 'google/gemini-pro', name: 'Gemini Pro', description: 'Google的高级多模态模型' },
-        { id: 'mistral/mistral-large', name: 'Mistral Large', description: 'Mistral AI的高性能大型语言模型' },
-        { id: 'meta/llama-3-70b', name: 'Llama 3 70B', description: 'Meta最新的开源大型语言模型' }
-      ]
+      models: modelsByProvider ? Object.entries(modelsByProvider.openrouter).map(([id, config]) => ({
+        id,
+        name: config.modelName,
+        description: config.description
+      })) : []
     },
     {
       id: 'siliconflow',
@@ -57,23 +59,21 @@ export function ModelSelector({
       needsKey: true,
       apiKey: '••••••••••••••••',
       website: 'https://www.siliconflow.cn',
-      models: [
-        { id: 'sf/yi-34b', name: 'Yi-34B', description: '01AI开源大模型' },
-        { id: 'sf/qwen-72b', name: 'Qwen-72B', description: '阿里通义千问大模型' },
-        { id: 'sf/llama3-70b', name: 'Llama3-70B', description: 'Meta最新开源模型' },
-        { id: 'sf/mixtral-8x7b', name: 'Mixtral-8x7B', description: 'Mistral AI的混合专家模型' }
-      ]
+      models: modelsByProvider ? Object.entries(modelsByProvider.siliconflow).map(([id, config]) => ({
+        id,
+        name: config.modelName,
+        description: config.description
+      })) : []
     },
     {
-      id: 'default',
-      name: '默认模型',
+      id: 'free',
+      name: '免费模型',
       needsKey: false,
-      models: [
-        { id: 'gpt4', name: 'GPT-4', description: '最强大的通用模型' },
-        { id: 'gpt35', name: 'GPT-3.5', description: '快速且经济的选择' },
-        { id: 'claude', name: 'Claude', description: '擅长长文本理解' },
-        { id: 'gemini', name: 'Gemini', description: '谷歌的多模态模型' }
-      ]
+      models: modelsByProvider ? Object.entries(modelsByProvider.free).map(([id, config]) => ({
+        id,
+        name: config.modelName,
+        description: config.description
+      })) : []
     }
   ];
 
@@ -171,6 +171,21 @@ export function ModelSelector({
   const toggleModelPanel = () => {
     setShowModelPanel(!showModelPanel);
   };
+
+  // 如果模型数据还在加载中
+  if (!modelsByProvider) {
+    return (
+      <div className="flex items-center relative">
+        <div className={`flex items-center py-1.5 px-3 rounded-full bg-white/90 shadow-sm ring-1 ring-gray-900/5 cursor-pointer ${colors.hover}`}>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={`w-4 h-4 mr-2 ${colors.text}`}>
+            <path d="M16.5 7.5h-9v9h9v-9z" />
+            <path fillRule="evenodd" d="M8.25 2.25A.75.75 0 019 3v.75h2.25V3a.75.75 0 011.5 0v.75H15V3a.75.75 0 011.5 0v.75h.75a3 3 0 013 3v.75H21A.75.75 0 0121 9h-.75v2.25H21a.75.75 0 010 1.5h-.75V15H21a.75.75 0 010 1.5h-.75v.75a3 3 0 01-3 3h-.75V21a.75.75 0 01-1.5 0v-.75h-2.25V21a.75.75 0 01-1.5 0v-.75H9V21a.75.75 0 01-1.5 0v-.75h-.75a3 3 0 01-3-3v-.75H3A.75.75 0 013 15h.75v-2.25H3a.75.75 0 010-1.5h.75V9H3a.75.75 0 010-1.5h.75v-.75a3 3 0 013-3h.75V3a.75.75 0 01.75-.75zM6 6.75A.75.75 0 016.75 6h10.5a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V6.75z" clipRule="evenodd" />
+          </svg>
+          <span className="text-sm font-medium text-gray-700">加载中...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center relative">
