@@ -336,118 +336,163 @@ export const AdvisorView = () => {
 
         {/* 机器人助手对话框 */}
         {showBotHelper && (
-          <div className="absolute -top-2 left-8 bg-white rounded-lg shadow-lg border border-gray-200/60 z-20 w-72 animate-fadeIn overflow-hidden">
+          <div className={`absolute -top-2 left-8 bg-white rounded-lg shadow-lg border border-gray-200/60 z-20 max-w-[38rem] ${analysisResults && analysisResults.length > 0 ? 'h-[21rem]' : 'h-auto'} animate-fadeIn overflow-hidden flex flex-col`}>
             {/* 连接线 */}
             <div className="absolute -left-2 top-3 w-2 h-2 bg-white transform rotate-45 border-l border-b border-gray-200/60"></div>
             
             {/* 标题栏 */}
-            <div className="flex justify-between items-center px-4 py-3 border-b border-gray-100">
-              <div className="flex items-center gap-2">
+            <div className="flex justify-between items-center px-4 py-2.5 border-b border-gray-100 flex-shrink-0">
+              <div className="flex items-center gap-1.5">
                 <div className="text-indigo-500 opacity-90">
-                  <BrainCircuit size={16} />
+                  <BrainCircuit size={14} />
                 </div>
-                <h3 className="text-sm font-medium text-gray-700">三观分辨助手</h3>
+                <h3 className="text-xs font-medium text-gray-700">三观分辨助手</h3>
               </div>
               <button 
                 onClick={toggleBotHelper}
                 className="text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100 p-1"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
               </button>
             </div>
             
-            {/* 内容区域 */}
-            <div className="p-4">
-              {/* 输入区域 */}
-              <div className="relative mb-4">
-                <textarea 
-                  ref={viewpointInputRef}
-                  value={viewpointInput}
-                  onChange={(e) => setViewpointInput(e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg p-3 pr-10 text-gray-700 text-xs focus:outline-none focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 transition-all resize-none shadow-sm"
-                  placeholder="输入您想分析的观念或想法..."
-                  rows={3}
-                  disabled={isAnalyzing}
-                ></textarea>
-                <button 
-                  onClick={handleViewpointAnalysis}
-                  disabled={isAnalyzing || !viewpointInput.trim()}
-                  className={`absolute right-3 bottom-3 p-1.5 rounded-full transition-all ${
-                    isAnalyzing || !viewpointInput.trim() 
-                      ? 'text-gray-300 cursor-not-allowed' 
-                      : 'text-indigo-500 hover:text-indigo-600 hover:bg-indigo-50 cursor-pointer'
-                  }`}
-                >
-                  {isAnalyzing ? (
-                    <div className="w-4 h-4 border-2 border-gray-200 border-t-indigo-500 rounded-full animate-spin"></div>
-                  ) : (
-                    <Sparkles size={16} />
-                  )}
-                </button>
-              </div>
-              
-              {/* 结果显示区域 - 有结果时显示 */}
-              {analysisResults && analysisResults.length > 0 && (
-                <div className="bg-gray-50/70 rounded-lg p-3 animate-fadeIn">
-                  <h4 className="text-xs font-medium text-gray-700 mb-2.5 flex items-center gap-1.5">
-                    <div className="text-indigo-500 opacity-80">
-                      <BrainCircuit size={12} />
-                    </div>
-                    分析结果
-                  </h4>
-                  <div className="space-y-2.5">
-                    {/* 结果项 - 动态生成 */}
-                    {analysisResults.map((result, index) => (
-                      <div 
-                        key={result.type}
-                        className={`bg-white rounded-md p-2.5 shadow-sm ${
-                          index > 0 ? `opacity-${Math.max(60, 100 - index * 15)}` : ''
-                        }`}
-                      >
-                        <div className="flex items-center gap-1.5 mb-1.5">
-                          <div className={`w-2 h-2 rounded-full ${
-                            result.type === '世界观' ? 'bg-indigo-400' : 
-                            result.type === '人生观' ? 'bg-purple-400' : 'bg-amber-400'
-                          }`}></div>
-                          <span className="text-xs font-medium text-gray-700">{result.type}</span>
-                          <div className="flex-1 mx-1.5 h-1 bg-gray-100 rounded-full overflow-hidden">
-                            <div 
-                              className={`h-full rounded-full ${
-                                result.type === '世界观' ? 'bg-indigo-400' : 
-                                result.type === '人生观' ? 'bg-purple-400' : 'bg-amber-400'
-                              }`}
-                              style={{ width: `${result.percentage}%` }}
-                            ></div>
-                          </div>
-                          <span className="text-[10px] text-gray-500 font-medium">{result.percentage}%</span>
+            {/* 内容区域 - 根据是否有分析结果显示不同内容 */}
+            {analysisResults && analysisResults.length > 0 ? (
+              // 有内容时显示完整分析结果
+              <div className="px-3 pb-2 flex flex-col sm:flex-row gap-3">
+                {/* 左侧：输入区和总体分析 */}
+                <div className="w-full sm:w-[50%] flex flex-col gap-3 mt-3">
+                  {/* 输入区域 */}
+                  <div className="relative">
+                    <textarea 
+                      ref={viewpointInputRef}
+                      value={viewpointInput}
+                      onChange={(e) => setViewpointInput(e.target.value)}
+                      className="w-full border border-gray-200 rounded-lg p-3 pr-10 text-gray-700 text-xs focus:outline-none focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 transition-all resize-none shadow-sm"
+                      placeholder="输入您想分析的观念或想法..."
+                      rows={3}
+                      disabled={isAnalyzing}
+                    ></textarea>
+                    <button 
+                      onClick={handleViewpointAnalysis}
+                      disabled={isAnalyzing || !viewpointInput.trim()}
+                      className={`absolute right-2.5 bottom-2.5 p-1.5 rounded-full transition-all ${
+                        isAnalyzing || !viewpointInput.trim() 
+                          ? 'text-gray-300 cursor-not-allowed' 
+                          : 'text-indigo-500 hover:text-indigo-600 hover:bg-indigo-50 cursor-pointer'
+                      }`}
+                    >
+                      {isAnalyzing ? (
+                        <div className="w-4 h-4 border-2 border-gray-200 border-t-indigo-500 rounded-full animate-spin"></div>
+                      ) : (
+                        <Sparkles size={16} />
+                      )}
+                    </button>
+                  </div>
+                  
+                  {/* 总体分析摘要 */}
+                  {analysisSummary && (
+                    <div className="bg-gray-50/80 rounded-lg p-3 h-[11rem]">
+                      <h5 className="text-xs font-medium text-gray-700 mb-1.5 flex items-center gap-1.5">
+                        <div className="text-indigo-500 opacity-90">
+                          <Sparkles size={12} />
                         </div>
-                        <p className="text-[10px] text-gray-600 pl-3.5">
-                          {result.explanation}
-                        </p>
-                      </div>
-                    ))}
-                    
-                    {/* 总体分析摘要 */}
-                    {analysisSummary && (
-                      <div className="mt-3 bg-white rounded-md p-2.5 shadow-sm border-l-2 border-indigo-400">
-                        <h5 className="text-xs font-medium text-gray-700 mb-1.5 flex items-center gap-1.5">
-                          <div className="text-indigo-500 opacity-80">
-                            <Sparkles size={12} />
-                          </div>
-                          总体分析
-                        </h5>
-                        <p className="text-[10px] text-gray-600">
+                        总体分析
+                      </h5>
+                      <div className="rounded-md p-2.5 shadow-sm border border-gray-100 border-l-2 border-l-indigo-500">
+                        <p className="h-[7rem] text-xs leading-relaxed text-gray-600 overflow-hidden line-clamp-6">
                           {analysisSummary}
                         </p>
                       </div>
-                    )}
+                    </div>
+                  )}
+                </div>
+                
+                {/* 右侧：三观分析结果 */}
+                <div className="w-full sm:w-[50%] bg-gray-50/80 rounded-lg p-2 mt-1">
+                  <div className="space-y-2.5">
+                    {/* 结果项 - 动态生成 */}
+                    {analysisResults.map((result, index) => {
+                      // 根据类型确定颜色类名
+                      const bgColorClass = 
+                        result.type === '世界观' ? 'bg-indigo-400' : 
+                        result.type === '人生观' ? 'bg-purple-400' : 'bg-amber-400';
+                        
+                      return (
+                        <div 
+                          key={result.type}
+                          className="rounded-md p-2 shadow-sm border border-gray-100 bg-white h-[5rem] overflow-hidden relative group"
+                        >
+                          {/* Tooltip显示完整内容 */}
+                          <div className="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-2 opacity-0 group-hover:opacity-100 group-hover:-translate-y-full transition-all duration-200 z-20 pointer-events-none">
+                            <div className="bg-gray-800 text-white p-3 rounded-md shadow-lg max-w-xs mb-2 text-xs w-64 backdrop-blur-sm bg-opacity-95">
+                              <div className="font-medium mb-1.5 border-b border-gray-700/70 pb-1.5 flex items-center justify-between">
+                                <span className="flex items-center gap-1.5">
+                                  <div className={`w-2 h-2 rounded-full ${bgColorClass}`}></div>
+                                  {result.type}
+                                </span>
+                                <span className="bg-gray-700/80 px-1.5 py-0.5 rounded text-[10px]">{result.percentage}%</span>
+                              </div>
+                              <p className="leading-relaxed max-h-40 overflow-y-auto pr-1 text-gray-200 pt-1">{result.explanation}</p>
+                            </div>
+                            <div className="w-3 h-3 bg-gray-800 transform rotate-45 absolute left-1/2 -ml-1.5 -bottom-1.5"></div>
+                          </div>
+                          
+                          {/* 默认显示的内容 */}
+                          <div className="flex items-center gap-2 mb-1">
+                            <div className={`w-2 h-2 rounded-full ${bgColorClass}`}></div>
+                            <span className="text-xs font-medium text-gray-700">{result.type}</span>
+                            <div className="flex-1 mx-1.5 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                              <div 
+                                className={`h-full rounded-full ${bgColorClass}`}
+                                style={{ width: `${result.percentage}%` }}
+                              ></div>
+                            </div>
+                            <span className="text-xs text-gray-500 font-medium">{result.percentage}%</span>
+                          </div>
+                          <p className="text-xs leading-tight text-gray-600 pl-3.5 overflow-hidden text-ellipsis line-clamp-3">
+                            {result.explanation}
+                          </p>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              // 无内容时只显示输入区，减少高度
+              <div className="px-3 py-2 w-[15rem]">
+                <div className="relative">
+                  <textarea 
+                    ref={viewpointInputRef}
+                    value={viewpointInput}
+                    onChange={(e) => setViewpointInput(e.target.value)}
+                    className="w-full border border-gray-200 rounded-lg p-3 pr-10 text-gray-700 text-xs focus:outline-none focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 transition-all resize-none shadow-sm"
+                    placeholder="输入您想分析的观念或想法..."
+                    rows={3}
+                    disabled={isAnalyzing}
+                  ></textarea>
+                  <button 
+                    onClick={handleViewpointAnalysis}
+                    disabled={isAnalyzing || !viewpointInput.trim()}
+                    className={`absolute right-2.5 bottom-2.5 p-1.5 rounded-full transition-all ${
+                      isAnalyzing || !viewpointInput.trim() 
+                        ? 'text-gray-300 cursor-not-allowed' 
+                        : 'text-indigo-500 hover:text-indigo-600 hover:bg-indigo-50 cursor-pointer'
+                    }`}
+                  >
+                    {isAnalyzing ? (
+                      <div className="w-4 h-4 border-2 border-gray-200 border-t-indigo-500 rounded-full animate-spin"></div>
+                    ) : (
+                      <Sparkles size={16} />
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
