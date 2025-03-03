@@ -21,7 +21,7 @@ export const MODELS_BY_PROVIDER: Record<ProviderType, Record<string, ModelConfig
       baseURL: "https://openrouter.ai/api/v1",
       temperature: 0.7,
       maxTokens: 2000,
-      description: "OpenAI GPT-3.5 Turbo - 快速响应，适合一般场景分析"
+      description: "OpenAI的快速响应模型，平衡效率与性能，适合日常对话和一般分析任务"
     },
     "gpt-4o": {
       modelName: "gpt-4o",
@@ -29,7 +29,7 @@ export const MODELS_BY_PROVIDER: Record<ProviderType, Record<string, ModelConfig
       baseURL: "https://openrouter.ai/api/v1",
       temperature: 0.5,
       maxTokens: 4000,
-      description: "OpenAI GPT-4o - 强大的多模态模型，适合复杂分析和推理"
+      description: "OpenAI的多模态旗舰模型，具备强大的推理能力和知识广度，适合复杂分析和创意任务"
     },
     "claude-3-7-sonnet": {
       modelName: "anthropic/claude-3-7-sonnet",
@@ -37,7 +37,7 @@ export const MODELS_BY_PROVIDER: Record<ProviderType, Record<string, ModelConfig
       baseURL: "https://openrouter.ai/api/v1",
       temperature: 0.5,
       maxTokens: 4000,
-      description: "Anthropic Claude 3.7 Sonnet - 最新的Claude模型，提供更高级的推理和理解能力"
+      description: "Anthropic最新的中型模型，提供卓越的推理和理解能力，擅长精确、有条理的回应"
     },
     "claude-3.5-sonnet": {
       modelName: "anthropic/claude-3.5-sonnet",
@@ -45,7 +45,7 @@ export const MODELS_BY_PROVIDER: Record<ProviderType, Record<string, ModelConfig
       baseURL: "https://openrouter.ai/api/v1",
       temperature: 0.5,
       maxTokens: 4000,
-      description: "Anthropic Claude 3.5 Sonnet - 擅长深度分析和情感理解，平衡速度与智能"
+      description: "Anthropic的平衡型模型，擅长深度分析和情感理解，在准确性和创造性之间取得良好平衡"
     },
     "deepseek-r1": {
       modelName: "deepseek/deepseek-r1",
@@ -53,7 +53,7 @@ export const MODELS_BY_PROVIDER: Record<ProviderType, Record<string, ModelConfig
       baseURL: "https://openrouter.ai/api/v1",
       temperature: 0.4,
       maxTokens: 3000,
-      description: "DeepSeek R1 - 强化学习模型，擅长复杂推理和逻辑分析"
+      description: "基于强化学习优化的推理模型，擅长逻辑分析和复杂推理，在数学和编程领域表现出色"
     },
     "deepseek-v3": {
       modelName: "deepseek/deepseek-chat",
@@ -61,25 +61,29 @@ export const MODELS_BY_PROVIDER: Record<ProviderType, Record<string, ModelConfig
       baseURL: "https://openrouter.ai/api/v1",
       temperature: 0.5,
       maxTokens: 4000,
-      description: "DeepSeek V3 - 最新的DeepSeek模型，提供更强的语言理解和推理能力，适合复杂场景分析"
+      description: "DeepSeek最新的通用对话模型，提供强大的语言理解和推理能力，适合多样化的复杂场景"
     }
   },
   
   // 硅基流动服务商的模型
   siliconflow: {
-    // 这里添加硅基流动的模型，示例格式如下
-    /*
-    "model-id": {
-      modelName: "model-name",
-      provider: "provider-name",
-      baseURL: "base-url",
+    "Pro/deepseek-ai/DeepSeek-V3": {
+      modelName: "Pro/deepseek-ai/DeepSeek-V3",
+      provider: "deepseek",
+      baseURL: "https://api.siliconflow.cn/v1",
       temperature: 0.5,
       maxTokens: 4000,
-      description: "模型描述"
+      description: "6710亿参数的MoE架构模型，采用多头注意力机制和无辅助预训练，在14.8万亿tokens上训练，推理效率和质量俱佳"
+    },
+    "Pro/deepseek-ai/DeepSeek-R1": {
+      modelName: "Pro/deepseek-ai/DeepSeek-R1",
+      provider: "deepseek",
+      baseURL: "https://api.siliconflow.cn/v1",
+      temperature: 0.4,
+      maxTokens: 3000,
+      description: "强化学习驱动的推理专精模型，解决重复性和可读性问题，在数学、代码和推理任务中与OpenAI-o1表现相当"
     }
-    */
   },
-  
   // 免费模型
   free: {
     "deepseek-v3-free": {
@@ -88,7 +92,7 @@ export const MODELS_BY_PROVIDER: Record<ProviderType, Record<string, ModelConfig
       baseURL: "https://openrouter.ai/api/v1",
       temperature: 0.5,
       maxTokens: 3000,
-      description: "DeepSeek Chat 免费版 - DeepSeek的免费对话模型，提供基础的对话和推理能力"
+      description: "DeepSeek提供的免费对话模型，具备良好的理解能力和基础推理能力，适合日常对话和简单分析"
     }
   }
 };
