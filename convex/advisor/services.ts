@@ -108,17 +108,48 @@ export const getAdvice = action({
         format_instructions: formatInstructions,
       });
 
-      // 调用模型并将结果转换为字符串
+      // 调用AI模型生成响应
+      // response对象结构为AIMessage，包含以下主要属性：
+      // - id: 响应的唯一标识符
+      // - content: AI生成的完整响应内容，通常为JSON格式字符串
+      // - additional_kwargs: 额外的元数据
+      // - response_metadata: 包含token使用情况和模型信息
+      //   - tokenUsage: 包含promptTokens, completionTokens, totalTokens
+      //   - finish_reason: 模型停止生成的原因
+      //   - model_name: 使用的模型名称
+      // - tool_calls: 工具调用信息（如果有）
+      // - invalid_tool_calls: 无效的工具调用信息（如果有）
+      // - usage_metadata: 更详细的token使用信息
       const response = await model.invoke(prompt);
 
       // 创建字符串输出解析器
       const stringOutputParser = new StringOutputParser();
+      // 获取到 响应对象的content属性值，为ai响应字符串内容，对于我们的需求，获得的是json字符串，还需要把json字符串转换为对象
       const responseText = await stringOutputParser.invoke(response);
       
       // 尝试解析结构化输出
       try {
+        // 将responseText(json字符串)转换为对象,是我们需要的结构化json对象
+        // 结构化json对象的结构如下：
+        // {
+        //   analysis: {
+        //     points: [
+        //       '你当前的心理需求是希望与这个女生建立更深的情感连接，但又担心这种情感会影响到你的自我成长和人格独立。',
+        //       '深层心理动机可能是你在寻找‘真正的自己’的过程中，希望通过这段关系来验证或确认自己的情感需求和价值取向。',
+        //       '内在冲突在于你既想保持谦恭和尊重，又担心过于主动或被动会影响到这段关系的健康发展。'
+        //     ]
+        //   },
+        //   actions: {
+        //     points: [
+        //       '尊重自己的情感，同时保持谦恭的态度，尝试与女生进行坦诚的沟通，表达你的感受和想法。',
+        //       '在追求这段关系的过程中，继续关注自我成长，确保你的情感需求不会影响到你的人格独立和经济独立。',
+        //       '与女生的家长进行私下沟通，确保双方都能理解和支持这段关系，避免不必要的误解和冲突。'
+        //     ]
+        //   },
+        //   fullContent: '你当前的心理需求是希望与这个女生建立更深的情感连接，但又担心这种情感会影响到你的自我成长和人格独立。深层心理动机可能是你在寻找‘真正的自己’的过程中，希望通过这段关系来验证或确认自己的情感需求和价值取向。内在冲突在于你既想保持谦恭和尊重，又担心过于主动或被动会影响到这段关系的健康发展。基于你的三观，建议你尊重自己的情感，同时保持谦恭的态度，尝试与女生进行坦诚的沟通，表达你的感受和想法。在追求这段关系的过程中，继续关注自我成长，确保你的情感需求不会影响到你的人格独立和经济独立。与女生的家长进行私下沟通，确保双方都能理解和支持这段关系，避免不必要的误解和冲突。'
+        // }
         const structuredOutput = await parser.parse(responseText);
-        
+
         // 返回成功结果
         return {
           content: {
