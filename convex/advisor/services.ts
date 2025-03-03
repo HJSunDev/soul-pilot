@@ -218,29 +218,28 @@ const viewpointAnalysisSchema = z.object({
       explanation: z.string(),
     })
   ).length(3),
-  summary: z.string().describe("对用户三观倾向的总体分析"),
+  summary: z.string().describe("对用户三观倾向的总体分析，明确这个观念属于哪种三观类型，并给出解释"),
 });
 
 // 分析用户输入的文本属于哪种三观类型的API接口
 export const analyzeViewpoint = action({
   args: {
     text: v.string(),
-    modelId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    // 获取API密钥
+    // 从convex服务端环境中获取OpenRouter服务的API密钥
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       throw new Error("OpenAI API key not found in environment variables");
     }
 
     try {
-      // 使用指定的模型或默认模型配置
-      const modelId = args.modelId || DEFAULT_MODEL_ID;
+      // 始终使用免费模型
+      const modelId = "deepseek-v3-free";
       const modelConfig = AVAILABLE_MODELS[modelId];
       
       if (!modelConfig) {
-        throw new Error(`未找到ID为 ${modelId} 的模型配置`);
+        throw new Error(`未找到免费模型配置 (deepseek-v3-free)`);
       }
 
       // 创建结构化输出解析器
@@ -250,17 +249,17 @@ export const analyzeViewpoint = action({
 
       // 创建提示模板
       const promptTemplate = PromptTemplate.fromTemplate(`
-你是一个专业的三观分析专家，你的任务是分析用户输入的文本属于哪种三观类型（世界观、人生观、价值观）。
+你是一个专业的三观分析专家，你的任务是分析用户输入的观念属于哪种三观类型（世界观、人生观、价值观）。
 
 三观的定义：
 1. 世界观：人们对整个世界的总体看法和根本观点，包括对自然、社会和思维发展的基本规律的认识和观点。
 2. 人生观：人们对人生目的、价值、意义的根本看法和态度，是人们对"人为什么活着"这一根本问题的回答。
 3. 价值观：人们对事物价值的根本看法和评价标准，是判断是非、善恶、美丑的基本准则。
 
-用户输入的文本：
+用户输入的观念：
 {text}
 
-请分析这段文本在三种三观类型中各自的占比（百分比，三种类型总和为100%），并给出解释。
+请分析这个观念在三种三观类型中各自的占比（百分比，三种类型总和为100%），并给出解释。
 
 {format_instructions}
       `);

@@ -49,6 +49,8 @@ export const AdvisorView = () => {
 
   // 获取 AI 建议的 action
   const getAIAdvice = useAction(api.advisor.services.getAdvice);
+  // 获取三观分析的 action
+  const analyzeViewpoint = useAction(api.advisor.services.analyzeViewpoint);
 
   // 用户输入的三观内容状态
   const [worldview, setWorldview] = useState<string>('');
@@ -68,6 +70,7 @@ export const AdvisorView = () => {
   const [viewpointInput, setViewpointInput] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResults, setAnalysisResults] = useState<ViewpointAnalysisResult[] | null>(null);
+  const [analysisSummary, setAnalysisSummary] = useState<string>('');
   const viewpointInputRef = useRef<HTMLTextAreaElement>(null);
 
   // 当从服务器获取到三观数据时，更新状态
@@ -240,32 +243,46 @@ export const AdvisorView = () => {
     if (!viewpointInput.trim()) return;
     
     setIsAnalyzing(true);
+    setAnalysisResults(null);
     
     try {
-      // 模拟 AI 分析过程
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // 这里应该调用实际的 AI 服务进行分析
-      // 目前使用模拟数据
-      const mockResults: ViewpointAnalysisResult[] = [
-        {
-          type: '世界观',
-          percentage: Math.floor(Math.random() * 60) + 40, // 40-100%
-          explanation: '这个想法主要反映了您对世界本质和规律的理解。'
-        },
-        {
-          type: '人生观',
-          percentage: Math.floor(Math.random() * 30) + 5, // 5-35%
-          explanation: '略微涉及到您对人生意义的思考。'
-        }
-      ];
-      
-      // 按百分比排序
-      mockResults.sort((a, b) => b.percentage - a.percentage);
-      
-      setAnalysisResults(mockResults);
+      // 调用后端服务进行三观分析
+      const response = await analyzeViewpoint({
+        text: viewpointInput
+      });
+
+      console.log('三观分析服务返回内容:', response);
+
+      // 检查响应状态
+      if (response.status === 'success' && response.isStructured) {
+        // 将结构化的分析结果设置到状态中
+        // 按百分比排序
+        const sortedResults = [...response.results].sort((a, b) => b.percentage - a.percentage);
+        setAnalysisResults(sortedResults);
+        setAnalysisSummary(response.summary || '');
+      } else {
+        console.error('三观分析服务返回错误:', response.error || '未能解析结构化输出');
+        // 如果有错误或未能解析结构化输出，显示一个基本的错误结果
+        setAnalysisResults([
+          {
+            type: '世界观',
+            percentage: 100,
+            explanation: response.summary || '分析失败，请重试'
+          }
+        ]);
+        setAnalysisSummary(response.summary || '分析失败，请重试');
+      }
     } catch (error) {
       console.error('分析失败:', error);
+      // 显示错误信息
+      setAnalysisResults([
+        {
+          type: '世界观',
+          percentage: 100,
+          explanation: error instanceof Error ? error.message : '未知错误，请重试'
+        }
+      ]);
+      setAnalysisSummary(error instanceof Error ? error.message : '未知错误，请重试');
     } finally {
       setIsAnalyzing(false);
     }
@@ -412,6 +429,21 @@ export const AdvisorView = () => {
                         </p>
                       </div>
                     ))}
+                    
+                    {/* 总体分析摘要 */}
+                    {analysisSummary && (
+                      <div className="mt-3 bg-white rounded-md p-2.5 shadow-sm border-l-2 border-indigo-400">
+                        <h5 className="text-xs font-medium text-gray-700 mb-1.5 flex items-center gap-1.5">
+                          <div className="text-indigo-500 opacity-80">
+                            <Sparkles size={12} />
+                          </div>
+                          总体分析
+                        </h5>
+                        <p className="text-[10px] text-gray-600">
+                          {analysisSummary}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
