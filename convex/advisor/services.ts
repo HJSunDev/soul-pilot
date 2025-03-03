@@ -206,3 +206,138 @@ export const getAdvice = action({
     }
   },
 });
+
+
+
+// 使用 Zod 定义三观分析输出的模式
+const viewpointAnalysisSchema = z.object({
+  results: z.array(
+    z.object({
+      type: z.enum(['世界观', '人生观', '价值观']),
+      percentage: z.number().min(0).max(100),
+      explanation: z.string(),
+    })
+  ).length(3),
+  summary: z.string().describe("对用户三观倾向的总体分析"),
+});
+
+// 分析用户输入的文本属于哪种三观类型的API接口
+export const analyzeViewpoint = action({
+  args: {
+    text: v.string(),
+    modelId: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    // 获取API密钥
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      throw new Error("OpenAI API key not found in environment variables");
+    }
+
+    try {
+      // 使用指定的模型或默认模型配置
+      const modelId = args.modelId || DEFAULT_MODEL_ID;
+      const modelConfig = AVAILABLE_MODELS[modelId];
+      
+      if (!modelConfig) {
+        throw new Error(`未找到ID为 ${modelId} 的模型配置`);
+      }
+
+      // 创建结构化输出解析器
+      const parser = StructuredOutputParser.fromZodSchema(viewpointAnalysisSchema);
+      // 获取格式化指令
+      const formatInstructions = parser.getFormatInstructions();
+
+      // 创建提示模板
+      const promptTemplate = PromptTemplate.fromTemplate(`
+你是一个专业的三观分析专家，你的任务是分析用户输入的文本属于哪种三观类型（世界观、人生观、价值观）。
+
+三观的定义：
+1. 世界观：人们对整个世界的总体看法和根本观点，包括对自然、社会和思维发展的基本规律的认识和观点。
+2. 人生观：人们对人生目的、价值、意义的根本看法和态度，是人们对"人为什么活着"这一根本问题的回答。
+3. 价值观：人们对事物价值的根本看法和评价标准，是判断是非、善恶、美丑的基本准则。
+
+用户输入的文本：
+{text}
+
+请分析这段文本在三种三观类型中各自的占比（百分比，三种类型总和为100%），并给出解释。
+
+{format_instructions}
+      `);
+
+      // 初始化 ChatOpenAI 模型
+      const model = new ChatOpenAI({
+        openAIApiKey: apiKey,
+        modelName: modelConfig.modelName,
+        temperature: modelConfig.temperature,
+        maxTokens: modelConfig.maxTokens,
+        // 使用配置的基础URL
+        configuration: modelConfig.baseURL ? {
+          baseURL: modelConfig.baseURL,
+        } : undefined,
+      });
+
+      // 格式化提示
+      const prompt = await promptTemplate.format({
+        text: args.text,
+        format_instructions: formatInstructions,
+      });
+
+      // 调用AI模型生成响应
+      const response = await model.invoke(prompt);
+
+      // 创建字符串输出解析器
+      const stringOutputParser = new StringOutputParser();
+      // 获取响应文本
+      const responseText = await stringOutputParser.invoke(response);
+      
+      // 尝试解析结构化输出
+      try {
+        const structuredOutput = await parser.parse(responseText);
+
+        // 返回成功结果
+        return {
+          results: structuredOutput.results,
+          summary: structuredOutput.summary,
+          modelUsed: {
+            id: modelId,
+            name: modelConfig.modelName,
+            provider: modelConfig.provider
+          },
+          timestamp: new Date().toISOString(),
+          status: "success",
+          isStructured: true,
+        };
+      } catch (parseError) {
+        console.error("解析结构化输出失败:", parseError);
+        
+        // 解析失败时的降级处理
+        return {
+          results: [],
+          summary: responseText || "无法解析AI回复",
+          modelUsed: {
+            id: modelId,
+            name: modelConfig.modelName,
+            provider: modelConfig.provider
+          },
+          timestamp: new Date().toISOString(),
+          status: "success",
+          isStructured: false,
+        };
+      }
+    } catch (error) {
+      // 记录错误日志
+      console.error("AI服务错误:", error);
+      
+      // 返回错误结果
+      return {
+        results: [],
+        summary: `抱歉，在处理您的请求时遇到了问题：${error instanceof Error ? error.message : "未知错误"}`,
+        error: error instanceof Error ? error.message : "Unknown error occurred",
+        timestamp: new Date().toISOString(),
+        status: "error",
+        isStructured: false,
+      };
+    }
+  },
+});
