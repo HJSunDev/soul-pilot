@@ -4,6 +4,7 @@ import "./globals.css";
 
 import { ConvexClientProvider } from "@/components/providers/convex-provider";
 import { ResponsiveProvider } from "@/components/providers/responsive-provider";
+import { AuthGuardProvider } from "@/components/providers/auth-guard-provider";
 import { Toaster } from "@/components/ui/toaster"
 
 const geistSans = Geist({
@@ -34,7 +35,9 @@ export default function RootLayout({
       >
         <ResponsiveProvider>
           <ConvexClientProvider>
-            {children}
+            <AuthGuardProvider>
+              {children}
+            </AuthGuardProvider>
           </ConvexClientProvider>
         </ResponsiveProvider>
         <Toaster />
