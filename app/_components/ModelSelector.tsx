@@ -275,18 +275,12 @@ export function ModelSelector({
           <div className="px-5 py-3 border-b border-gray-100 flex justify-between items-center">
             <div className="flex items-center">
               <h3 className="text-sm font-medium text-gray-900">选择AI模型</h3>
-              {/* 安全提示图标和悬停提示 */}
-              <div className="relative ml-2 group">
-                <div className="cursor-help">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-blue-500">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div className="absolute left-0 top-6 w-64 p-2 bg-blue-50 border border-blue-100 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <p className="text-[10px] text-blue-700 leading-tight">
-                    <span className="font-medium">安全提示：</span>您的API密钥仅存储在本地浏览器中，我们不会在服务器上存储或处理您的密钥。刷新页面或重新访问时会自动加载已保存的密钥。
-                  </p>
-                </div>
+              {/* 安全提示直接显示在标题栏 */}
+              <div className="flex items-center ml-3 text-[10px] text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5 mr-1 text-gray-400 flex-shrink-0">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clipRule="evenodd" />
+                </svg>
+                <span>API密钥仅存储在本地浏览器中</span>
               </div>
             </div>
             <button 
