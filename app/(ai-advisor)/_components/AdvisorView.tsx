@@ -9,6 +9,7 @@ import { api } from "@/convex/_generated/api";
 import { debounce } from 'lodash';
 // import { toast } from "sonner";
 import { Bot, Sparkles, BrainCircuit } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 // 定义编辑状态类型
 export type EditStatus = 'editing' | 'saving' | 'saved' | 'error';
@@ -402,11 +403,28 @@ export const AdvisorView = () => {
                         </div>
                         总体分析
                       </h5>
-                      <div className="rounded-md p-2.5 shadow-sm border border-gray-100 border-l-2 border-l-indigo-500">
-                        <p className="h-[7rem] text-xs leading-relaxed text-gray-600 overflow-hidden line-clamp-6">
-                          {analysisSummary}
-                        </p>
-                      </div>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="rounded-md p-2.5 shadow-sm border border-gray-100 border-l-2 border-l-indigo-500 cursor-pointer">
+                            <p className="h-[7rem] text-xs leading-relaxed text-gray-600 overflow-hidden line-clamp-6">
+                              {analysisSummary}
+                            </p>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent 
+                          side="right" 
+                          className="!bg-gray-800 !text-white p-3 rounded-md shadow-lg text-xs !backdrop-blur-none !bg-opacity-100 border-0 w-[20rem]"
+             
+                          sideOffset={5}
+                        >
+                          <div className="font-medium mb-1.5 border-b border-gray-700/70 pb-1.5">
+                            总体分析
+                          </div>
+                          <p className="leading-relaxed max-h-60 overflow-y-auto pr-1 text-gray-200 pt-1">
+                            {analysisSummary}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
                   )}
                 </div>
@@ -422,41 +440,43 @@ export const AdvisorView = () => {
                         result.type === '人生观' ? 'bg-purple-400' : 'bg-amber-400';
                         
                       return (
-                        <div 
-                          key={result.type}
-                          className="rounded-md p-2 shadow-sm border border-gray-100 bg-white h-[5rem] overflow-hidden relative group"
-                        >
-                          {/* Tooltip显示完整内容 */}
-                          <div className="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-2 opacity-0 group-hover:opacity-100 group-hover:-translate-y-full transition-all duration-200 z-20 pointer-events-none">
-                            <div className="bg-gray-800 text-white p-3 rounded-md shadow-lg max-w-xs mb-2 text-xs w-64 backdrop-blur-sm bg-opacity-95">
-                              <div className="font-medium mb-1.5 border-b border-gray-700/70 pb-1.5 flex items-center justify-between">
-                                <span className="flex items-center gap-1.5">
-                                  <div className={`w-2 h-2 rounded-full ${bgColorClass}`}></div>
-                                  {result.type}
-                                </span>
-                                <span className="bg-gray-700/80 px-1.5 py-0.5 rounded text-[10px]">{result.percentage}%</span>
+                        <Tooltip key={result.type}>
+                          <TooltipTrigger asChild>
+                            <div 
+                              className="rounded-md p-2 shadow-sm border border-gray-100 bg-white h-[5rem] overflow-hidden relative"
+                            >
+                              {/* 默认显示的内容 */}
+                              <div className="flex items-center gap-2 mb-1">
+                                <div className={`w-2 h-2 rounded-full ${bgColorClass}`}></div>
+                                <span className="text-xs font-medium text-gray-700">{result.type}</span>
+                                <div className="flex-1 mx-1.5 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                  <div 
+                                    className={`h-full rounded-full ${bgColorClass}`}
+                                    style={{ width: `${result.percentage}%` }}
+                                  ></div>
+                                </div>
+                                <span className="text-xs text-gray-500 font-medium">{result.percentage}%</span>
                               </div>
-                              <p className="leading-relaxed max-h-40 overflow-y-auto pr-1 text-gray-200 pt-1">{result.explanation}</p>
+                              <p className="text-xs leading-tight text-gray-600 pl-3.5 overflow-hidden text-ellipsis line-clamp-3">
+                                {result.explanation}
+                              </p>
                             </div>
-                            <div className="w-3 h-3 bg-gray-800 transform rotate-45 absolute left-1/2 -ml-1.5 -bottom-1.5"></div>
-                          </div>
-                          
-                          {/* 默认显示的内容 */}
-                          <div className="flex items-center gap-2 mb-1">
-                            <div className={`w-2 h-2 rounded-full ${bgColorClass}`}></div>
-                            <span className="text-xs font-medium text-gray-700">{result.type}</span>
-                            <div className="flex-1 mx-1.5 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                              <div 
-                                className={`h-full rounded-full ${bgColorClass}`}
-                                style={{ width: `${result.percentage}%` }}
-                              ></div>
+                          </TooltipTrigger>
+                          <TooltipContent 
+                            side="right" 
+                            className="!bg-gray-800 !text-white p-3 rounded-md shadow-lg text-xs !backdrop-blur-none !bg-opacity-100 border-0 w-[15rem]"
+                            sideOffset={5}
+                          >
+                            <div className="font-medium mb-1.5 border-b border-gray-700/70 pb-1.5 flex items-center justify-between">
+                              <span className="flex items-center gap-1.5">
+                                <div className={`w-2 h-2 rounded-full ${bgColorClass}`}></div>
+                                {result.type}
+                              </span>
+                              <span className="bg-gray-700/80 px-1.5 py-0.5 rounded text-[10px]">{result.percentage}%</span>
                             </div>
-                            <span className="text-xs text-gray-500 font-medium">{result.percentage}%</span>
-                          </div>
-                          <p className="text-xs leading-tight text-gray-600 pl-3.5 overflow-hidden text-ellipsis line-clamp-3">
-                            {result.explanation}
-                          </p>
-                        </div>
+                            <p className="leading-relaxed max-h-40 overflow-y-auto pr-1 text-gray-200 pt-1">{result.explanation}</p>
+                          </TooltipContent>
+                        </Tooltip>
                       );
                     })}
                   </div>
@@ -464,7 +484,7 @@ export const AdvisorView = () => {
               </div>
             ) : (
               // 无内容时只显示输入区，减少高度
-              <div className="px-3 py-2 w-[15rem]">
+              <div className="px-3 py-2 w-[20rem]">
                 <div className="relative">
                   <textarea 
                     ref={viewpointInputRef}
@@ -472,7 +492,7 @@ export const AdvisorView = () => {
                     onChange={(e) => setViewpointInput(e.target.value)}
                     className="w-full border border-gray-200 rounded-lg p-3 pr-10 text-gray-700 text-xs focus:outline-none focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 transition-all resize-none shadow-sm"
                     placeholder="输入您想分析的观念或想法..."
-                    rows={3}
+                    rows={4}
                     disabled={isAnalyzing}
                   ></textarea>
                   <button 

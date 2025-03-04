@@ -218,7 +218,7 @@ const viewpointAnalysisSchema = z.object({
       explanation: z.string(),
     })
   ).length(3),
-  summary: z.string().describe("对用户三观倾向的总体分析，明确这个观念属于哪种三观类型，并给出解释"),
+  summary: z.string().describe("对用户三观倾向的总体分析，明确这个观念属于哪种三观类型，并给出解释，以第二人称视角回答"),
 });
 
 // 分析用户输入的文本属于哪种三观类型的API接口
