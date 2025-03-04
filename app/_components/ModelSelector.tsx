@@ -1,6 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
+import { debounce } from 'lodash';
 
 interface ModelSelectorProps {
   theme?: 'rose' | 'indigo' | 'default';
@@ -46,6 +47,62 @@ export function ModelSelector({
   // 获取模型数据
   const modelsByProvider = useQuery(api.advisor.queries.getModelsByProvider);
 
+  // 从本地存储加载API Key
+  useEffect(() => {
+    const loadApiKeys = () => {
+      try {
+        const storedOpenRouterKey = localStorage.getItem('soul_pilot_openrouter_key');
+        const storedSiliconFlowKey = localStorage.getItem('soul_pilot_siliconflow_key');
+        
+        setApiKeys({
+          openrouter: storedOpenRouterKey || '',
+          siliconflow: storedSiliconFlowKey || ''
+        });
+      } catch (error) {
+        console.error('无法从本地存储加载API Key:', error);
+      }
+    };
+    
+    loadApiKeys();
+  }, []);
+
+  // 保存API Key到本地存储
+  const saveApiKeyToLocalStorage = useCallback((providerId: string, value: string) => {
+    try {
+      if (providerId === 'openrouter') {
+        localStorage.setItem('soul_pilot_openrouter_key', value);
+      } else if (providerId === 'siliconflow') {
+        localStorage.setItem('soul_pilot_siliconflow_key', value);
+      }
+    } catch (error) {
+      console.error(`保存${providerId}的API Key到本地存储时出错:`, error);
+    }
+  }, []);
+
+  // 使用lodash的debounce创建防抖保存函数
+  const debouncedSave = useCallback(
+    debounce(saveApiKeyToLocalStorage, 500),
+    [saveApiKeyToLocalStorage]
+  );
+
+  // 处理API Key更新
+  const handleApiKeyChange = useCallback((providerId: string, value: string) => {
+    setApiKeys(prev => ({
+      ...prev,
+      [providerId]: value
+    }));
+    
+    // 使用lodash的debounce函数延迟保存
+    debouncedSave(providerId, value);
+  }, [debouncedSave]);
+
+  // 组件卸载时取消未执行的防抖函数
+  useEffect(() => {
+    return () => {
+      debouncedSave.cancel();
+    };
+  }, [debouncedSave]);
+
   // 模型提供商列表
   const modelProviders: ModelProvider[] = [
     {
@@ -54,7 +111,7 @@ export function ModelSelector({
       needsKey: true,
       apiKey: apiKeys.openrouter || '••••••••••••••••',
       website: 'https://openrouter.ai',
-      models: modelsByProvider ? Object.entries(modelsByProvider.openrouter).map(([id, config]) => ({
+      models: modelsByProvider ? Object.entries(modelsByProvider.openrouter || {}).map(([id, config]) => ({
         id,
         name: config.modelName,
         description: config.description,
@@ -68,7 +125,7 @@ export function ModelSelector({
       needsKey: true,
       apiKey: apiKeys.siliconflow || '••••••••••••••••',
       website: 'https://www.siliconflow.cn',
-      models: modelsByProvider ? Object.entries(modelsByProvider.siliconflow).map(([id, config]) => ({
+      models: modelsByProvider ? Object.entries(modelsByProvider.siliconflow || {}).map(([id, config]) => ({
         id,
         name: config.modelName,
         description: config.description,
@@ -80,7 +137,7 @@ export function ModelSelector({
       id: 'free',
       name: '免费模型',
       needsKey: false,
-      models: modelsByProvider ? Object.entries(modelsByProvider.free).map(([id, config]) => ({
+      models: modelsByProvider ? Object.entries(modelsByProvider.free || {}).map(([id, config]) => ({
         id,
         name: config.modelName,
         description: config.description,
@@ -143,23 +200,6 @@ export function ModelSelector({
     if (onModelSelect) {
       onModelSelect(providerId, modelId, modelName);
     }
-  };
-
-  // 处理API Key更新 - 自动保存
-  const handleApiKeyChange = (providerId: string, value: string) => {
-    setApiKeys(prev => ({
-      ...prev,
-      [providerId]: value
-    }));
-    
-    // 在实际应用中，这里应该有一个防抖函数来延迟保存
-    // 例如使用 setTimeout 或 lodash 的 debounce
-    const saveTimeout = setTimeout(() => {
-      console.log(`自动保存${providerId}的API Key:`, value);
-      // 这里应该调用API保存到数据库
-    }, 1000);
-    
-    return () => clearTimeout(saveTimeout);
   };
 
   // 切换API Key显示状态
@@ -233,7 +273,22 @@ export function ModelSelector({
         >
           {/* 面板头部 - 简化设计 */}
           <div className="px-5 py-3 border-b border-gray-100 flex justify-between items-center">
-            <h3 className="text-sm font-medium text-gray-900">选择AI模型</h3>
+            <div className="flex items-center">
+              <h3 className="text-sm font-medium text-gray-900">选择AI模型</h3>
+              {/* 安全提示图标和悬停提示 */}
+              <div className="relative ml-2 group">
+                <div className="cursor-help">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-blue-500">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="absolute left-0 top-6 w-64 p-2 bg-blue-50 border border-blue-100 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <p className="text-[10px] text-blue-700 leading-tight">
+                    <span className="font-medium">安全提示：</span>您的API密钥仅存储在本地浏览器中，我们不会在服务器上存储或处理您的密钥。刷新页面或重新访问时会自动加载已保存的密钥。
+                  </p>
+                </div>
+              </div>
+            </div>
             <button 
               onClick={() => setShowModelPanel(false)} 
               className="p-1 rounded-full hover:bg-gray-100 transition-colors"
@@ -291,7 +346,7 @@ export function ModelSelector({
                             href={provider.website} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className={`text-[10px] text-${colors.accent} hover:underline flex items-center`}
+                            className="text-[10px] text-blue-500 hover:underline flex items-center"
                           >
                             获取API Key
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-2.5 h-2.5 ml-0.5">
@@ -307,12 +362,12 @@ export function ModelSelector({
                                (provider.id === 'siliconflow' && showSiliconFlowKey) ? 'text' : 'password'} 
                           value={apiKeys[provider.id] || ''}
                           onChange={(e) => handleApiKeyChange(provider.id, e.target.value)}
-                          placeholder="输入API Key后自动保存"
-                          className={`w-full text-xs px-2 py-1.5 border ${apiKeys[provider.id] ? `border-${colors.accent}/30` : 'border-gray-300'} rounded-md focus:outline-none focus:ring-1 focus:ring-${colors.accent} focus:border-${colors.accent} transition-all duration-200 placeholder:text-[10px]`}
+                          placeholder="输入API Key后自动保存到本地"
+                          className="w-full text-xs px-2 py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder:text-[10px]"
                         />
                         {apiKeys[provider.id] && (
-                          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                            <span className={`inline-flex items-center px-1 py-0.5 rounded-full text-[9px] font-medium bg-${colors.accent}/10 text-${colors.accent}`}>
+                          <div className="absolute right-0 inset-y-0 flex items-center pr-2">
+                            <span className="inline-flex items-center px-1 py-0.5 rounded-full text-[9px] font-medium bg-green-100 text-green-700">
                               已保存
                             </span>
                           </div>
