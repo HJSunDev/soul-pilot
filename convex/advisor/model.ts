@@ -6,6 +6,8 @@ interface ModelConfig {
   temperature: number;     // 温度参数
   maxTokens: number;       // 最大token数
   description: string;     // 模型描述
+  isRecommended: boolean;  // 是否推荐
+  isFree: boolean;         // 是否免费
 }
 
 // 定义服务商类型
@@ -21,7 +23,9 @@ export const MODELS_BY_PROVIDER: Record<ProviderType, Record<string, ModelConfig
       baseURL: "https://openrouter.ai/api/v1",
       temperature: 0.7,
       maxTokens: 2000,
-      description: "OpenAI的快速响应模型，平衡效率与性能，适合日常对话和一般分析任务"
+      description: "OpenAI的快速响应模型，平衡效率与性能，适合日常对话和一般分析任务",
+      isRecommended: false,
+      isFree: false
     },
     "gpt-4o": {
       modelName: "gpt-4o",
@@ -29,7 +33,9 @@ export const MODELS_BY_PROVIDER: Record<ProviderType, Record<string, ModelConfig
       baseURL: "https://openrouter.ai/api/v1",
       temperature: 0.5,
       maxTokens: 4000,
-      description: "OpenAI的多模态旗舰模型，具备强大的推理能力和知识广度，适合复杂分析和创意任务"
+      description: "OpenAI的多模态旗舰模型，具备强大的推理能力和知识广度，适合复杂分析和创意任务",
+      isRecommended: false,
+      isFree: false
     },
     "claude-3-7-sonnet": {
       modelName: "anthropic/claude-3-7-sonnet",
@@ -37,7 +43,9 @@ export const MODELS_BY_PROVIDER: Record<ProviderType, Record<string, ModelConfig
       baseURL: "https://openrouter.ai/api/v1",
       temperature: 0.5,
       maxTokens: 4000,
-      description: "Anthropic最新的中型模型，提供卓越的推理和理解能力，擅长精确、有条理的回应"
+      description: "Anthropic最新的中型模型，提供卓越的推理和理解能力，擅长精确、有条理的回应",
+      isRecommended: true,
+      isFree: false
     },
     "claude-3.5-sonnet": {
       modelName: "anthropic/claude-3.5-sonnet",
@@ -45,7 +53,9 @@ export const MODELS_BY_PROVIDER: Record<ProviderType, Record<string, ModelConfig
       baseURL: "https://openrouter.ai/api/v1",
       temperature: 0.5,
       maxTokens: 4000,
-      description: "Anthropic的平衡型模型，擅长深度分析和情感理解，在准确性和创造性之间取得良好平衡"
+      description: "Anthropic的平衡型模型，擅长深度分析和情感理解，在准确性和创造性之间取得良好平衡",
+      isRecommended: false,
+      isFree: false
     },
     "deepseek-r1": {
       modelName: "deepseek/deepseek-r1",
@@ -53,7 +63,9 @@ export const MODELS_BY_PROVIDER: Record<ProviderType, Record<string, ModelConfig
       baseURL: "https://openrouter.ai/api/v1",
       temperature: 0.4,
       maxTokens: 3000,
-      description: "基于强化学习优化的推理模型，擅长逻辑分析和复杂推理，在数学和编程领域表现出色"
+      description: "基于强化学习优化的推理模型，擅长逻辑分析和复杂推理，在数学和编程领域表现出色",
+      isRecommended: false,
+      isFree: false
     },
     "deepseek-v3": {
       modelName: "deepseek/deepseek-chat",
@@ -61,7 +73,9 @@ export const MODELS_BY_PROVIDER: Record<ProviderType, Record<string, ModelConfig
       baseURL: "https://openrouter.ai/api/v1",
       temperature: 0.5,
       maxTokens: 4000,
-      description: "DeepSeek最新的通用对话模型，提供强大的语言理解和推理能力，适合多样化的复杂场景"
+      description: "DeepSeek最新的通用对话模型，提供强大的语言理解和推理能力，适合多样化的复杂场景",
+      isRecommended: false,
+      isFree: false
     }
   },
   
@@ -73,7 +87,9 @@ export const MODELS_BY_PROVIDER: Record<ProviderType, Record<string, ModelConfig
       baseURL: "https://api.siliconflow.cn/v1",
       temperature: 0.5,
       maxTokens: 4000,
-      description: "6710亿参数的MoE架构模型，采用多头注意力机制和无辅助预训练，在14.8万亿tokens上训练，推理效率和质量俱佳"
+      description: "6710亿参数的MoE架构模型，采用多头注意力机制和无辅助预训练，在14.8万亿tokens上训练，推理效率和质量俱佳",
+      isRecommended: false,
+      isFree: false
     },
     "Pro/deepseek-ai/DeepSeek-R1": {
       modelName: "Pro/deepseek-ai/DeepSeek-R1",
@@ -81,7 +97,9 @@ export const MODELS_BY_PROVIDER: Record<ProviderType, Record<string, ModelConfig
       baseURL: "https://api.siliconflow.cn/v1",
       temperature: 0.4,
       maxTokens: 3000,
-      description: "强化学习驱动的推理专精模型，解决重复性和可读性问题，在数学、代码和推理任务中与OpenAI-o1表现相当"
+      description: "强化学习驱动的推理专精模型，解决重复性和可读性问题，在数学、代码和推理任务中与OpenAI-o1表现相当",
+      isRecommended: false,
+      isFree: false
     }
   },
   // 免费模型
@@ -92,7 +110,9 @@ export const MODELS_BY_PROVIDER: Record<ProviderType, Record<string, ModelConfig
       baseURL: "https://openrouter.ai/api/v1",
       temperature: 0.5,
       maxTokens: 3000,
-      description: "DeepSeek提供的免费对话模型，具备良好的理解能力和基础推理能力，适合日常对话和简单分析"
+      description: "DeepSeek提供的免费对话模型，具备良好的理解能力和基础推理能力，适合日常对话和简单分析",
+      isRecommended: false,
+      isFree: true
     }
   }
 };

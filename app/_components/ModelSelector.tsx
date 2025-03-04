@@ -20,6 +20,8 @@ interface Model {
   id: string;
   name: string;
   description: string;
+  isRecommended: boolean;
+  isFree: boolean;
 }
 
 export function ModelSelector({
@@ -55,7 +57,9 @@ export function ModelSelector({
       models: modelsByProvider ? Object.entries(modelsByProvider.openrouter).map(([id, config]) => ({
         id,
         name: config.modelName,
-        description: config.description
+        description: config.description,
+        isRecommended: config.isRecommended,
+        isFree: config.isFree
       })) : []
     },
     {
@@ -67,7 +71,9 @@ export function ModelSelector({
       models: modelsByProvider ? Object.entries(modelsByProvider.siliconflow).map(([id, config]) => ({
         id,
         name: config.modelName,
-        description: config.description
+        description: config.description,
+        isRecommended: config.isRecommended,
+        isFree: config.isFree
       })) : []
     },
     {
@@ -77,7 +83,9 @@ export function ModelSelector({
       models: modelsByProvider ? Object.entries(modelsByProvider.free).map(([id, config]) => ({
         id,
         name: config.modelName,
-        description: config.description
+        description: config.description,
+        isRecommended: config.isRecommended,
+        isFree: config.isFree
       })) : []
     }
   ];
@@ -356,7 +364,7 @@ export function ModelSelector({
                                 </div>
                               )}
                               {/* 推荐模型添加标识 */}
-                              {true && (
+                              {model.isRecommended && (
                                 <div className="absolute top-0 right-[4px] px-1.5 py-[1px] text-[8px] font-medium rounded-md"
                                   style={{ 
                                     backgroundColor: '#2196F3', // 蓝色，表示推荐，更加醒目且专业
@@ -366,12 +374,13 @@ export function ModelSelector({
                                   推荐
                                 </div>
                               )}
-                              {/* 其他可能的标签示例 */}
-                              {true && (
-                                <div className="absolute top-0 right-[4px] px-1.5 py-[1px] text-[8px] font-medium rounded-md"
+                              {/* 免费模型标签 */}
+                              {model.isFree && (
+                                <div className="absolute top-0 px-1.5 py-[1px] text-[8px] font-medium rounded-md"
                                   style={{ 
-                                    backgroundColor: '#4CAF50', // 绿色，表示高性能
-                                    color: 'white'
+                                    backgroundColor: '#4CAF50', // 绿色，表示免费
+                                    color: 'white',
+                                    right: model.isRecommended ? '40px' : '4px'
                                   }}
                                 >
                                   免费
