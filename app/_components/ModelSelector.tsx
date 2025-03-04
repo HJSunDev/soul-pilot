@@ -29,8 +29,13 @@ export function ModelSelector({
   const [showModelPanel, setShowModelPanel] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState('free');
   const [selectedModel, setSelectedModel] = useState('DeepSeek Chat 免费版');
+  const [selectedModelId, setSelectedModelId] = useState('');
   const [showOpenRouterKey, setShowOpenRouterKey] = useState(false);
   const [showSiliconFlowKey, setShowSiliconFlowKey] = useState(false);
+  const [apiKeys, setApiKeys] = useState<{[key: string]: string}>({
+    openrouter: '',
+    siliconflow: ''
+  });
   
   // 添加点击外部关闭面板的功能
   const modelPanelRef = useRef<HTMLDivElement>(null);
@@ -45,7 +50,7 @@ export function ModelSelector({
       id: 'openrouter',
       name: 'OpenRouter',
       needsKey: true,
-      apiKey: '••••••••••••••••',
+      apiKey: apiKeys.openrouter || '••••••••••••••••',
       website: 'https://openrouter.ai',
       models: modelsByProvider ? Object.entries(modelsByProvider.openrouter).map(([id, config]) => ({
         id,
@@ -57,7 +62,7 @@ export function ModelSelector({
       id: 'siliconflow',
       name: '硅基流动',
       needsKey: true,
-      apiKey: '••••••••••••••••',
+      apiKey: apiKeys.siliconflow || '••••••••••••••••',
       website: 'https://www.siliconflow.cn',
       models: modelsByProvider ? Object.entries(modelsByProvider.siliconflow).map(([id, config]) => ({
         id,
@@ -123,6 +128,7 @@ export function ModelSelector({
   const handleSelectModel = (providerId: string, modelId: string, modelName: string) => {
     setSelectedProvider(providerId);
     setSelectedModel(modelName);
+    setSelectedModelId(modelId);
     setShowModelPanel(false);
     
     // 调用父组件的回调函数
@@ -131,16 +137,30 @@ export function ModelSelector({
     }
   };
 
-  // 处理API Key更新
+  // 处理API Key更新 - 自动保存
   const handleApiKeyChange = (providerId: string, value: string) => {
-    // 在实际应用中，这里应该更新状态并保存到数据库或本地存储
-    console.log(`更新${providerId}的API Key:`, value);
+    setApiKeys(prev => ({
+      ...prev,
+      [providerId]: value
+    }));
+    
+    // 在实际应用中，这里应该有一个防抖函数来延迟保存
+    // 例如使用 setTimeout 或 lodash 的 debounce
+    const saveTimeout = setTimeout(() => {
+      console.log(`自动保存${providerId}的API Key:`, value);
+      // 这里应该调用API保存到数据库
+    }, 1000);
+    
+    return () => clearTimeout(saveTimeout);
   };
 
-  // 保存API Key
-  const handleSaveApiKey = (providerId: string, value: string) => {
-    console.log(`保存${providerId}的API Key:`, value);
-    // 显示保存成功的提示
+  // 切换API Key显示状态
+  const toggleKeyVisibility = (provider: string) => {
+    if (provider === 'openrouter') {
+      setShowOpenRouterKey(!showOpenRouterKey);
+    } else if (provider === 'siliconflow') {
+      setShowSiliconFlowKey(!showSiliconFlowKey);
+    }
   };
 
   // 点击外部关闭面板
@@ -157,15 +177,6 @@ export function ModelSelector({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showModelPanel]);
-
-  // 切换API Key显示状态
-  const toggleKeyVisibility = (provider: string) => {
-    if (provider === 'openrouter') {
-      setShowOpenRouterKey(!showOpenRouterKey);
-    } else if (provider === 'siliconflow') {
-      setShowSiliconFlowKey(!showSiliconFlowKey);
-    }
-  };
 
   // 切换模型面板的显示
   const toggleModelPanel = () => {
@@ -229,113 +240,162 @@ export function ModelSelector({
           <div className="p-4 overflow-y-auto custom-scrollbar" style={{height: 'calc(28rem - 3rem)'}}>
             <div className="grid grid-cols-3 gap-4 h-full">
               {modelProviders.map((provider) => (
-                <div key={provider.id} className={`rounded-lg border ${selectedProvider === provider.id ? `border-${colors.accent}/40` : 'border-gray-100'} overflow-hidden transition-all duration-200 hover:shadow-md flex flex-col h-full`}>
+                <div key={provider.id} className="rounded-lg border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-md flex flex-col h-full">
                   {/* 提供商标题 - 更紧凑的设计 */}
-                  <div className={`flex items-center justify-between px-3 py-2 ${selectedProvider === provider.id ? `bg-${colors.lighter}` : 'bg-gray-50'}`}>
-                    <h4 className={`text-xs font-medium ${selectedProvider === provider.id ? `text-${colors.accent}` : 'text-gray-700'}`}>
+                  <div className={`flex items-center justify-between px-3 py-2 bg-gray-50 border-b border-gray-200`}>
+                    <h4 className="text-xs font-medium text-gray-700">
                       {provider.name}
                     </h4>
-                    {selectedProvider === provider.id && (
-                      <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-${colors.accent} text-white`}>
-                        当前
-                      </span>
+                    {provider.needsKey && (
+                      <button 
+                        onClick={() => toggleKeyVisibility(provider.id)}
+                        className="text-[10px] text-gray-500 hover:text-gray-700 flex items-center"
+                      >
+                        {(provider.id === 'openrouter' && showOpenRouterKey) || 
+                         (provider.id === 'siliconflow' && showSiliconFlowKey) ? (
+                          <>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 mr-0.5">
+                              <path d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
+                              <path fillRule="evenodd" d="M.664 10.59a1.651 1.651 0 010-1.186A10.004 10.004 0 0110 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0110 17c-4.257 0-7.893-2.66-9.336-6.41zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                            </svg>
+                            隐藏
+                          </>
+                        ) : (
+                          <>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 mr-0.5">
+                              <path fillRule="evenodd" d="M3.28 2.22a.75.75 0 00-1.06 1.06l14.5 14.5a.75.75 0 101.06-1.06l-1.745-1.745a10.029 10.029 0 003.3-4.38 1.651 1.651 0 000-1.185A10.004 10.004 0 009.999 3a9.956 9.956 0 00-4.744 1.194L3.28 2.22zM7.752 6.69l1.092 1.092a2.5 2.5 0 013.374 3.373l1.091 1.092a4 4 0 00-5.557-5.557z" clipRule="evenodd" />
+                              <path d="M10.748 13.93l2.523 2.523a9.987 9.987 0 01-3.27.547c-4.258 0-7.894-2.66-9.337-6.41a1.651 1.651 0 010-1.186A10.007 10.007 0 012.839 6.02L6.07 9.252a4 4 0 004.678 4.678z" />
+                            </svg>
+                            显示
+                          </>
+                        )}
+                      </button>
                     )}
                   </div>
                   
-                  {/* API Key 输入区域 - 更紧凑的设计 */}
+                  {/* API Key 输入区域 - 更紧凑的设计，移除保存按钮 */}
                   {provider.needsKey && (
-                    <div className="px-3 py-2 border-b border-gray-100">
-                      <div className="flex items-center justify-between mb-1.5">
+                    <div className="px-3 py-2 border-b border-gray-200 bg-gray-50/50">
+                      <div className="flex items-center justify-between mb-1">
                         <label className="text-xs font-medium text-gray-700">API Key</label>
-                        <button 
-                          onClick={() => toggleKeyVisibility(provider.id)}
-                          className="text-[10px] text-gray-500 hover:text-gray-700 flex items-center"
-                        >
-                          {(provider.id === 'openrouter' && showOpenRouterKey) || 
-                           (provider.id === 'siliconflow' && showSiliconFlowKey) ? (
-                            <>
-                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 mr-0.5">
-                                <path d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
-                                <path fillRule="evenodd" d="M.664 10.59a1.651 1.651 0 010-1.186A10.004 10.004 0 0110 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0110 17c-4.257 0-7.893-2.66-9.336-6.41zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-                              </svg>
-                              隐藏
-                            </>
-                          ) : (
-                            <>
-                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 mr-0.5">
-                                <path fillRule="evenodd" d="M3.28 2.22a.75.75 0 00-1.06 1.06l14.5 14.5a.75.75 0 101.06-1.06l-1.745-1.745a10.029 10.029 0 003.3-4.38 1.651 1.651 0 000-1.185A10.004 10.004 0 009.999 3a9.956 9.956 0 00-4.744 1.194L3.28 2.22zM7.752 6.69l1.092 1.092a2.5 2.5 0 013.374 3.373l1.091 1.092a4 4 0 00-5.557-5.557z" clipRule="evenodd" />
-                                <path d="M10.748 13.93l2.523 2.523a9.987 9.987 0 01-3.27.547c-4.258 0-7.894-2.66-9.337-6.41a1.651 1.651 0 010-1.186A10.007 10.007 0 012.839 6.02L6.07 9.252a4 4 0 004.678 4.678z" />
-                              </svg>
-                              显示
-                            </>
-                          )}
-                        </button>
+                        {provider.website && (
+                          <a 
+                            href={provider.website} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className={`text-[10px] text-${colors.accent} hover:underline flex items-center`}
+                          >
+                            获取API Key
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-2.5 h-2.5 ml-0.5">
+                              <path fillRule="evenodd" d="M4.25 5.5a.75.75 0 00-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 00.75-.75v-4a.75.75 0 011.5 0v4A2.25 2.25 0 0112.75 17h-8.5A2.25 2.25 0 012 14.75v-8.5A2.25 2.25 0 014.25 4h5a.75.75 0 010 1.5h-5z" clipRule="evenodd" />
+                              <path fillRule="evenodd" d="M6.194 12.753a.75.75 0 001.06.053L16.5 4.44v2.81a.75.75 0 001.5 0v-4.5a.75.75 0 00-.75-.75h-4.5a.75.75 0 000 1.5h2.553l-9.056 8.194a.75.75 0 00-.053 1.06z" clipRule="evenodd" />
+                            </svg>
+                          </a>
+                        )}
                       </div>
-                      <div className="flex">
+                      <div className="relative">
                         <input 
                           type={(provider.id === 'openrouter' && showOpenRouterKey) || 
                                (provider.id === 'siliconflow' && showSiliconFlowKey) ? 'text' : 'password'} 
-                          value={provider.apiKey || ''}
+                          value={apiKeys[provider.id] || ''}
                           onChange={(e) => handleApiKeyChange(provider.id, e.target.value)}
-                          placeholder="输入API Key"
-                          className="w-full text-xs px-2 py-1.5 border border-gray-300 rounded-l-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="输入API Key后自动保存"
+                          className={`w-full text-xs px-2 py-1.5 border ${apiKeys[provider.id] ? `border-${colors.accent}/30` : 'border-gray-300'} rounded-md focus:outline-none focus:ring-1 focus:ring-${colors.accent} focus:border-${colors.accent} transition-all duration-200 placeholder:text-[10px]`}
                         />
-                        <button 
-                          onClick={() => handleSaveApiKey(provider.id, provider.apiKey || '')}
-                          className={`px-2 py-1.5 bg-${colors.accent}/10 border border-l-0 border-${colors.accent}/30 rounded-r-md text-xs font-medium text-${colors.accent} hover:bg-${colors.accent}/20 transition-colors`}
-                        >
-                          保存
-                        </button>
-                      </div>
-                      
-                      {/* 服务商网站链接 - 更紧凑的设计 */}
-                      <div className="flex justify-between items-center mt-1.5">
-                        <p className="text-[10px] text-gray-500">
-                          获取API Key:
-                        </p>
-                        <a 
-                          href={provider.website} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className={`text-[10px] text-${colors.accent} hover:underline flex items-center`}
-                        >
-                          访问官网
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-2.5 h-2.5 ml-0.5">
-                            <path fillRule="evenodd" d="M4.25 5.5a.75.75 0 00-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 00.75-.75v-4a.75.75 0 011.5 0v4A2.25 2.25 0 0112.75 17h-8.5A2.25 2.25 0 012 14.75v-8.5A2.25 2.25 0 014.25 4h5a.75.75 0 010 1.5h-5z" clipRule="evenodd" />
-                            <path fillRule="evenodd" d="M6.194 12.753a.75.75 0 001.06.053L16.5 4.44v2.81a.75.75 0 001.5 0v-4.5a.75.75 0 00-.75-.75h-4.5a.75.75 0 000 1.5h2.553l-9.056 8.194a.75.75 0 00-.053 1.06z" clipRule="evenodd" />
-                          </svg>
-                        </a>
+                        {apiKeys[provider.id] && (
+                          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                            <span className={`inline-flex items-center px-1 py-0.5 rounded-full text-[9px] font-medium bg-${colors.accent}/10 text-${colors.accent}`}>
+                              已保存
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
                   
-                  {/* 模型列表 - 固定高度，确保滚动 */}
-                  <div className="overflow-y-auto custom-scrollbar px-2 py-2 flex-1">
-                    <div className="space-y-1.5">
-                      {provider.models.map((model) => (
-                        <button
-                          key={model.id}
-                          onClick={() => handleSelectModel(provider.id, model.id, model.name)}
-                          className={`w-full flex flex-col px-3 py-2 rounded-md text-left transition-all duration-200 ${
-                            selectedProvider === provider.id && selectedModel === model.name 
-                              ? `bg-${colors.accent}/10 border border-${colors.accent}/30` 
-                              : 'hover:bg-gray-50 border border-transparent'
-                          }`}
-                        >
-                          <div className="flex justify-between items-center">
-                            <span className={`text-xs font-medium ${selectedProvider === provider.id && selectedModel === model.name ? `text-${colors.accent}` : 'text-gray-800'}`}>
-                              {model.name}
-                            </span>
+                  {/* 模型列表 - 固定高度，确保滚动，增强模型之间的分界线 */}
+                  <div className="overflow-y-auto custom-scrollbar flex-1 bg-white">
+                    <div className="py-1">
+                      {provider.models.map((model, index) => {
+                        const isSelected = selectedProvider === provider.id && selectedModel === model.name;
+                        
+                        // 根据主题获取颜色
+                        const bgColor = theme === 'rose'
+                          ? 'rgba(255, 241, 242, 0.6)'
+                          : theme === 'indigo'
+                            ? 'rgba(238, 242, 255, 0.6)'
+                            : 'rgba(249, 250, 251, 0.6)';
+                        
+                        const accentColor = theme === 'rose'
+                          ? 'rgb(225, 29, 72)' // rose-600
+                          : theme === 'indigo'
+                            ? 'rgb(79, 70, 229)' // indigo-600
+                            : 'rgb(75, 85, 99)'; // gray-600
                             
-                            {selectedProvider === provider.id && selectedModel === model.name && (
-                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={`w-4 h-4 text-${colors.accent}`}>
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
-                              </svg>
-                            )}
+                        return (
+                          <div key={model.id} className={index !== 0 ? "border-t border-gray-100" : ""}>
+                            <button
+                              onClick={() => handleSelectModel(provider.id, model.id, model.name)}
+                              className={`w-full flex flex-col px-3 py-2.5 text-left transition-all duration-300 relative ${
+                                isSelected ? '' : 'hover:bg-gray-50'
+                              }`}
+                              style={isSelected ? {
+                                background: bgColor,
+                              } : {}}
+                            >
+                              {/* 当前使用中的模型添加标识 */}
+                              {isSelected && (
+                                <div 
+                                  className="absolute top-0 left-0 px-1 py-[1px] text-[8px] font-medium rounded-br-md"
+                                  style={{ 
+                                    backgroundColor: accentColor,
+                                    color: 'white'
+                                  }}
+                                >
+                                  使用中
+                                </div>
+                              )}
+                              {/* 推荐模型添加标识 */}
+                              {true && (
+                                <div className="absolute top-0 right-[4px] px-1.5 py-[1px] text-[8px] font-medium rounded-md"
+                                  style={{ 
+                                    backgroundColor: '#2196F3', // 蓝色，表示推荐，更加醒目且专业
+                                    color: 'white'
+                                  }}
+                                >
+                                  推荐
+                                </div>
+                              )}
+                              {/* 其他可能的标签示例 */}
+                              {true && (
+                                <div className="absolute top-0 right-[4px] px-1.5 py-[1px] text-[8px] font-medium rounded-md"
+                                  style={{ 
+                                    backgroundColor: '#4CAF50', // 绿色，表示高性能
+                                    color: 'white'
+                                  }}
+                                >
+                                  免费
+                                </div>
+                              )}
+
+                              <div className="flex items-center">
+                                <span className={`text-xs font-medium truncate ${
+                                  isSelected
+                                    ? theme === 'rose'
+                                      ? 'text-rose-700'
+                                      : theme === 'indigo'
+                                        ? 'text-indigo-700'
+                                        : 'text-gray-700'
+                                    : 'text-gray-800'
+                                }`}>
+                                  {model.name}
+                                </span>
+                              </div>
+                              <p className="text-[9px] text-gray-500 mt-1 line-clamp-2 leading-relaxed">{model.description}</p>
+                            </button>
                           </div>
-                          <p className="text-[10px] text-gray-500 mt-0.5 line-clamp-2">{model.description}</p>
-                        </button>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 </div>

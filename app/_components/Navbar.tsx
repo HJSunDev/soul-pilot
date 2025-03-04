@@ -33,7 +33,7 @@ export function Navbar({
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-40 h-16 bg-transparent ${className}`}>
-      <div className="w-full sm:px-6 lg:px-8 h-full flex justify-between">
+      <div className="w-full sm:px-6 lg:px-4 h-full flex justify-between">
         {/* 左侧区域 - 返回主页按钮 */}
         <div className="flex items-center">
           <BackHomeButton theme={theme} className="ml-1" />
