@@ -31,7 +31,7 @@ export function ModelSelector({
 }: ModelSelectorProps) {
   const [showModelPanel, setShowModelPanel] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState('free');
-  const [selectedModel, setSelectedModel] = useState('DeepSeek Chat 免费版');
+  const [selectedModel, setSelectedModel] = useState('');
   const [selectedModelId, setSelectedModelId] = useState('');
   const [showOpenRouterKey, setShowOpenRouterKey] = useState(false);
   const [showSiliconFlowKey, setShowSiliconFlowKey] = useState(false);
@@ -47,10 +47,11 @@ export function ModelSelector({
   // 获取模型数据
   const modelsByProvider = useQuery(api.advisor.queries.getModelsByProvider);
 
-  // 从本地存储加载API Key
+  // 从本地存储加载API Key和用户选择的模型
   useEffect(() => {
-    const loadApiKeys = () => {
+    const loadFromLocalStorage = () => {
       try {
+        // 加载API Keys
         const storedOpenRouterKey = localStorage.getItem('soul_pilot_openrouter_key');
         const storedSiliconFlowKey = localStorage.getItem('soul_pilot_siliconflow_key');
         
@@ -58,12 +59,32 @@ export function ModelSelector({
           openrouter: storedOpenRouterKey || '',
           siliconflow: storedSiliconFlowKey || ''
         });
+        
+        // 加载用户选择的模型
+        const savedProvider = localStorage.getItem('soul_pilot_selected_provider');
+        const savedModelId = localStorage.getItem('soul_pilot_selected_model_id');
+        const savedModelName = localStorage.getItem('soul_pilot_selected_model_name');
+        
+        if (savedProvider && savedModelId && savedModelName) {
+          setSelectedProvider(savedProvider);
+          setSelectedModelId(savedModelId);
+          setSelectedModel(savedModelName);
+        } else {
+          // 如果没有保存的模型，设置默认值
+          setSelectedProvider('free');
+          setSelectedModelId('deepseek-v3-free');
+          setSelectedModel('deepseek/deepseek-chat:free');
+        }
       } catch (error) {
-        console.error('无法从本地存储加载API Key:', error);
+        console.error('无法从本地存储加载数据:', error);
+        // 设置默认值
+        setSelectedProvider('free');
+        setSelectedModelId('deepseek-v3-free');
+        setSelectedModel('deepseek/deepseek-chat:free');
       }
     };
     
-    loadApiKeys();
+    loadFromLocalStorage();
   }, []);
 
   // 保存API Key到本地存储
@@ -196,6 +217,15 @@ export function ModelSelector({
     setSelectedModelId(modelId);
     setShowModelPanel(false);
     
+    // 保存用户选择的模型到本地存储
+    try {
+      localStorage.setItem('soul_pilot_selected_provider', providerId);
+      localStorage.setItem('soul_pilot_selected_model_id', modelId);
+      localStorage.setItem('soul_pilot_selected_model_name', modelName);
+    } catch (error) {
+      console.error('保存模型选择到本地存储时出错:', error);
+    }
+    
     // 调用父组件的回调函数
     if (onModelSelect) {
       onModelSelect(providerId, modelId, modelName);
@@ -211,11 +241,24 @@ export function ModelSelector({
     }
   };
 
+  // 切换模型面板的显示
+  const toggleModelPanel = () => {
+    if (showModelPanel) {
+      // 关闭面板时，重置API Key显示状态为隐藏
+      setShowOpenRouterKey(false);
+      setShowSiliconFlowKey(false);
+    }
+    setShowModelPanel(!showModelPanel);
+  };
+
   // 点击外部关闭面板
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (showModelPanel && modelPanelRef.current && !modelPanelRef.current.contains(event.target as Node) &&
           !(modelButtonRef.current && modelButtonRef.current.contains(event.target as Node))) {
+        // 关闭面板时，重置API Key显示状态为隐藏
+        setShowOpenRouterKey(false);
+        setShowSiliconFlowKey(false);
         setShowModelPanel(false);
       }
     }
@@ -225,11 +268,6 @@ export function ModelSelector({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showModelPanel]);
-
-  // 切换模型面板的显示
-  const toggleModelPanel = () => {
-    setShowModelPanel(!showModelPanel);
-  };
 
   // 如果模型数据还在加载中
   if (!modelsByProvider) {
@@ -258,7 +296,7 @@ export function ModelSelector({
           <path d="M16.5 7.5h-9v9h9v-9z" />
           <path fillRule="evenodd" d="M8.25 2.25A.75.75 0 019 3v.75h2.25V3a.75.75 0 011.5 0v.75H15V3a.75.75 0 011.5 0v.75h.75a3 3 0 013 3v.75H21A.75.75 0 0121 9h-.75v2.25H21a.75.75 0 010 1.5h-.75V15H21a.75.75 0 010 1.5h-.75v.75a3 3 0 01-3 3h-.75V21a.75.75 0 01-1.5 0v-.75h-2.25V21a.75.75 0 01-1.5 0v-.75H9V21a.75.75 0 01-1.5 0v-.75h-.75a3 3 0 01-3-3v-.75H3A.75.75 0 013 15h.75v-2.25H3a.75.75 0 010-1.5h.75V9H3a.75.75 0 010-1.5h.75v-.75a3 3 0 013-3h.75V3a.75.75 0 01.75-.75zM6 6.75A.75.75 0 016.75 6h10.5a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V6.75z" clipRule="evenodd" />
         </svg>
-        <span className="text-sm font-medium text-gray-700">{selectedModel}</span>
+        <span className="text-sm font-medium text-gray-700">{selectedModelId}</span>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 ml-1 text-gray-400">
           <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
         </svg>
@@ -284,7 +322,11 @@ export function ModelSelector({
               </div>
             </div>
             <button 
-              onClick={() => setShowModelPanel(false)} 
+              onClick={() => {
+                setShowOpenRouterKey(false);
+                setShowSiliconFlowKey(false);
+                setShowModelPanel(false);
+              }} 
               className="p-1 rounded-full hover:bg-gray-100 transition-colors"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-gray-500">
@@ -446,7 +488,7 @@ export function ModelSelector({
                                         : 'text-gray-700'
                                     : 'text-gray-800'
                                 }`}>
-                                  {model.name}
+                                  {model.id}
                                 </span>
                               </div>
                               <p className="text-[9px] text-gray-500 mt-1 line-clamp-2 leading-relaxed">{model.description}</p>
