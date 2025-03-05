@@ -5,6 +5,7 @@ import { Navbar } from '@/app/_components/Navbar';
 import { SideNav } from '@/app/_components/SideNav';
 import { getNavModules } from '@/app/_config/navigation';
 import { DiaryEditor } from "../_components/DiaryEditor"
+import { UnderDevelopment } from "@/app/_components/UnderDevelopment";
 
 const PersonalityModelingPage = () => {
   const [diaryContent, setDiaryContent] = useState<string>('');
@@ -46,6 +47,11 @@ const PersonalityModelingPage = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-white via-emerald-50/20 to-teal-50/30 relative">
+      {/* 开发中遮罩 */}
+      <UnderDevelopment 
+        moduleName="人格建模" 
+        estimatedCompletion="2025年第二季度" 
+      />
       {/* 背景装饰 */}
       <div className="absolute top-0 right-0 w-[30rem] h-[30rem] bg-emerald-100/20 rounded-full blur-3xl pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[20rem] h-[20rem] bg-teal-100/20 rounded-full blur-3xl pointer-events-none"></div>

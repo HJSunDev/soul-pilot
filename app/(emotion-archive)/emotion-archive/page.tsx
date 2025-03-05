@@ -10,6 +10,8 @@ import { SideNav } from "@/app/_components/SideNav";
 import { getNavModules } from "@/app/_config/navigation";
 import { motion } from "framer-motion";
 
+import { UnderDevelopment } from "@/app/_components/UnderDevelopment";
+
 export default function EmotionArchivePage() {
   // AI分析状态
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -70,6 +72,13 @@ export default function EmotionArchivePage() {
 
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-rose-50/30 via-white to-rose-50/20 overflow-hidden">
+      
+      {/* 开发中遮罩 */}
+      <UnderDevelopment 
+        moduleName="情绪档案" 
+        estimatedCompletion="2025年第二季度" 
+      />
+      
       {/* 背景装饰 */}
       <div className="absolute inset-0 bg-grid-gray-900/[0.02] -z-10" />
       <div className="absolute inset-0 bg-gradient-to-b from-white/50 to-transparent backdrop-blur-[1px] -z-10" />
