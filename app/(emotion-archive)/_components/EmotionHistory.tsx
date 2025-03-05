@@ -11,6 +11,14 @@ const emotionGradients = {
   anxiety: 'from-pink-100 via-pink-50 to-transparent'
 } as const;
 
+// 定义情绪类型及其对应的背景色
+const emotionColors = {
+  joy: 'bg-amber-100 text-amber-500 border-amber-200',
+  calm: 'bg-emerald-100 text-emerald-500 border-emerald-200',
+  sad: 'bg-purple-100 text-purple-500 border-purple-200',
+  anxiety: 'bg-pink-100 text-pink-500 border-pink-200'
+} as const;
+
 // 模拟历史数据
 const mockHistoryData = [
   {
@@ -18,7 +26,7 @@ const mockHistoryData = [
     date: '今天',
     time: '14:30',
     emotion: { type: 'joy', name: '愉悦', icon: '😊', intensity: 85 },
-    content: '今天的项目演示非常成功，团队的努力得到了认可，感到很欣慰。',
+    content: '今天的项目演示非常成功，感到很欣慰。',
   },
   {
     id: '2',
@@ -40,64 +48,87 @@ const mockHistoryData = [
     time: '15:20',
     emotion: { type: 'calm', name: '平静', icon: '😌', intensity: 90 },
     content: '午后的阳光很温暖。',
+  },
+  {
+    id: '5',
+    date: '4天前',
+    time: '18:45',
+    emotion: { type: 'joy', name: '愉悦', icon: '😊', intensity: 80 },
+    content: '收到了期待已久的礼物，心情大好。',
   }
 ];
 
 export function EmotionHistory() {
+  const [selectedEntry, setSelectedEntry] = useState<string | null>(null);
+  
   return (
-    <CardContent className="h-full p-3">
-      <div className="h-full flex flex-col">
-        {/* 标题 */}
-        <div className="flex items-center gap-2 mb-3">
-          <svg className="w-4 h-4 text-rose-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span className="text-sm font-medium text-gray-900">情绪轨迹</span>
-        </div>
-
-        {/* 情绪记录 */}
-        <div className="flex-1 flex items-center">
-          <div className="w-full flex gap-2 overflow-x-auto custom-scrollbar pb-1">
-            {mockHistoryData.map((entry) => (
-              <div
-                key={entry.id}
-                className="flex-shrink-0 w-28 group"
-              >
-                <div className="relative rounded-xl transition-all duration-300 hover:scale-105">
-                  <div className={`
-                    absolute inset-0 rounded-xl bg-gradient-to-r opacity-50 transition-opacity duration-300 group-hover:opacity-75
-                    ${emotionGradients[entry.emotion.type as keyof typeof emotionGradients]}
-                  `} />
-                  
-                  <div className="relative p-2.5 rounded-xl bg-white/80 backdrop-blur-sm border border-white/50 shadow-sm">
-                    {/* 头部信息 */}
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-lg">{entry.emotion.icon}</span>
-                      <div className="w-8 h-1 rounded-full bg-gray-100 overflow-hidden">
-                        <div 
-                          className="h-full rounded-full bg-rose-400 transition-all duration-300"
-                          style={{ width: `${entry.emotion.intensity}%` }}
-                        />
-                      </div>
-                    </div>
-                    
-                    {/* 时间 */}
-                    <div className="mb-1.5">
-                      <div className="text-xs font-medium text-gray-900">{entry.date}</div>
-                      <div className="text-[10px] text-gray-500">{entry.time}</div>
-                    </div>
-
-                    {/* 内容 */}
-                    <div className="text-[10px] leading-normal text-gray-600 line-clamp-3">
-                      {entry.content}
-                    </div>
+    <div className="h-full overflow-y-auto custom-scrollbar pr-2">
+      {/* 时间线 */}
+      <div className="relative pl-6 pb-4">
+        {/* 时间线轴 */}
+        <div className="absolute left-2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-rose-200 via-rose-100 to-rose-50"></div>
+        
+        {/* 情绪记录条目 */}
+        {mockHistoryData.map((entry, index) => (
+          <div 
+            key={entry.id}
+            className={`relative mb-4 transition-all duration-300 ${
+              selectedEntry === entry.id ? 'scale-[1.02]' : ''
+            }`}
+          >
+            {/* 时间线节点 */}
+            <div className={`absolute left-[-0.5rem] top-3 w-4 h-4 rounded-full border-2 border-white shadow-sm z-10 ${
+              emotionColors[entry.emotion.type as keyof typeof emotionColors].split(' ')[0]
+            }`}></div>
+            
+            {/* 情绪卡片 */}
+            <div 
+              className="bg-white/80 backdrop-blur-sm rounded-lg shadow-sm border border-white/60 overflow-hidden hover:shadow-md transition-all duration-300 cursor-pointer"
+              onClick={() => setSelectedEntry(selectedEntry === entry.id ? null : entry.id)}
+            >
+              {/* 卡片头部 */}
+              <div className="flex items-center justify-between p-3 border-b border-gray-100">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">{entry.emotion.icon}</span>
+                  <div>
+                    <div className="text-sm font-medium text-gray-800">{entry.emotion.name}</div>
+                    <div className="text-xs text-gray-500">{entry.date} {entry.time}</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-16 h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                    <div 
+                      className={`h-full rounded-full transition-all duration-300 ${
+                        entry.emotion.type === 'joy' ? 'bg-amber-400' :
+                        entry.emotion.type === 'calm' ? 'bg-emerald-400' :
+                        entry.emotion.type === 'sad' ? 'bg-purple-400' :
+                        'bg-pink-400'
+                      }`}
+                      style={{ width: `${entry.emotion.intensity}%` }}
+                    />
                   </div>
                 </div>
               </div>
-            ))}
+              
+              {/* 卡片内容 */}
+              <div className={`overflow-hidden transition-all duration-300 ${
+                selectedEntry === entry.id ? 'max-h-32' : 'max-h-0'
+              }`}>
+                <div className="p-3 text-sm text-gray-600 ">
+                  {entry.content}
+                </div>
+              </div>
+              
+              {/* 卡片预览 - 仅在未展开时显示 */}
+              {selectedEntry !== entry.id && (
+                <div className="p-2 text-xs text-gray-500 line-clamp-1">
+                  {entry.content}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        ))}
       </div>
-    </CardContent>
+    </div>
   );
-} 
+}
