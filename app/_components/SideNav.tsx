@@ -14,7 +14,7 @@ interface SideNavProps {
   // 导航模块数据
   modules: NavModule[];
   // 主题色，用于定制不同页面的颜色风格
-  theme?: 'rose' | 'indigo' | 'default';
+  theme?: 'rose' | 'indigo' | 'emerald' | 'default';
   // 自定义类名，用于覆盖默认样式
   className?: string;
 }
@@ -49,6 +49,12 @@ export function SideNav({
       activeBg: 'bg-indigo-50',
       hoverText: 'hover:text-indigo-600',
       hoverBg: 'hover:bg-indigo-50/50'
+    },
+    emerald: {
+      activeText: 'text-emerald-600',
+      activeBg: 'bg-emerald-50',
+      hoverText: 'hover:text-emerald-600',
+      hoverBg: 'hover:bg-emerald-50/50'
     },
     default: {
       activeText: 'text-gray-900',

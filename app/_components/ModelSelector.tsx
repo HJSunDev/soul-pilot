@@ -4,7 +4,7 @@ import { api } from '../../convex/_generated/api';
 import { debounce } from 'lodash';
 
 interface ModelSelectorProps {
-  theme?: 'rose' | 'indigo' | 'default';
+  theme?: 'rose' | 'indigo' | 'emerald' | 'default';
   onModelSelect?: (provider: string, modelId: string, modelName: string) => void;
 }
 
@@ -192,6 +192,17 @@ export function ModelSelector({
       light: 'indigo-100',
       lighter: 'indigo-50',
     },
+    emerald: {
+      accent: 'emerald-500',
+      hover: 'hover:bg-emerald-50',
+      active: 'active:bg-emerald-100',
+      text: 'text-emerald-500',
+      bg: 'bg-emerald-500',
+      border: 'border-emerald-200',
+      highlight: 'bg-emerald-50',
+      light: 'emerald-100',
+      lighter: 'emerald-50',
+    },
     default: {
       accent: 'gray-500',
       hover: 'hover:bg-gray-50',
@@ -205,7 +216,7 @@ export function ModelSelector({
     }
   };
 
-  const colors = themeColors[theme === 'rose' ? 'rose' : theme === 'indigo' ? 'indigo' : 'default'];
+  const colors = themeColors[theme === 'rose' ? 'rose' : theme === 'indigo' ? 'indigo' : theme === 'emerald' ? 'emerald' : 'default'];
 
   // 获取当前选择的提供商
   const currentProvider = modelProviders.find(p => p.id === selectedProvider) || modelProviders[2];
@@ -423,13 +434,17 @@ export function ModelSelector({
                           ? 'rgba(255, 241, 242, 0.6)'
                           : theme === 'indigo'
                             ? 'rgba(238, 242, 255, 0.6)'
-                            : 'rgba(249, 250, 251, 0.6)';
+                            : theme === 'emerald'
+                              ? 'rgba(240, 253, 244, 0.6)'
+                              : 'rgba(249, 250, 251, 0.6)';
                         
                         const accentColor = theme === 'rose'
                           ? 'rgb(225, 29, 72)' // rose-600
                           : theme === 'indigo'
                             ? 'rgb(79, 70, 229)' // indigo-600
-                            : 'rgb(75, 85, 99)'; // gray-600
+                            : theme === 'emerald'
+                              ? 'rgb(20, 184, 166)' // emerald-600
+                              : 'rgb(75, 85, 99)'; // gray-600
                             
                         return (
                           <div key={model.id} className={index !== 0 ? "border-t border-gray-100" : ""}>
@@ -485,7 +500,9 @@ export function ModelSelector({
                                       ? 'text-rose-700'
                                       : theme === 'indigo'
                                         ? 'text-indigo-700'
-                                        : 'text-gray-700'
+                                        : theme === 'emerald'
+                                          ? 'text-emerald-700'
+                                          : 'text-gray-700'
                                     : 'text-gray-800'
                                 }`}>
                                   {model.id}

@@ -6,7 +6,7 @@ import { ConfigPanel } from './ConfigPanel';
 
 interface NavbarProps {
   // 主题色，用于定制不同页面的颜色风格
-  theme?: 'rose' | 'indigo' | 'default';
+  theme?: 'rose' | 'indigo' | 'emerald' | 'default';
   // 自定义类名，用于覆盖默认样式
   className?: string;
 }
@@ -30,6 +30,32 @@ export function Navbar({
     console.log(`配置变更: ${configType}`, value);
     // 在这里处理配置变更，例如更新状态或调用API
   };
+
+  // 主题颜色配置
+  const themeColors = {
+    rose: {
+      accent: 'rose-500',
+      hover: 'hover:bg-rose-50',
+      text: 'text-rose-500'
+    },
+    indigo: {
+      accent: 'indigo-500',
+      hover: 'hover:bg-indigo-50',
+      text: 'text-indigo-500'
+    },
+    emerald: {
+      accent: 'emerald-500',
+      hover: 'hover:bg-emerald-50',
+      text: 'text-emerald-500'
+    },
+    default: {
+      accent: 'gray-500',
+      hover: 'hover:bg-gray-50',
+      text: 'text-gray-500'
+    }
+  };
+
+  const colors = themeColors[theme];
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-40 h-16 bg-transparent ${className}`}>

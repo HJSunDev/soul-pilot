@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 interface BackHomeButtonProps {
   // 主题色，用于定制不同页面的颜色风格
-  theme?: 'rose' | 'indigo' | 'default';
+  theme?: 'rose' | 'indigo' | 'emerald' | 'default';
   // 自定义类名，用于覆盖默认样式
   className?: string;
 }
@@ -26,6 +26,13 @@ export function BackHomeButton({
       iconBg: 'bg-indigo-500/[0.12]',
       iconText: 'text-indigo-500',
       gradient: 'from-indigo-500/0 via-indigo-500/70 to-indigo-500/0'
+    },
+    emerald: {
+      accent: 'emerald',
+      shadow: 'shadow-emerald-200/50',
+      iconBg: 'bg-emerald-500/[0.12]',
+      iconText: 'text-emerald-500',
+      gradient: 'from-emerald-500/0 via-emerald-500/70 to-emerald-500/0'
     },
     default: {
       accent: 'gray',
