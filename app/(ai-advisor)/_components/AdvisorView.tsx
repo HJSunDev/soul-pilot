@@ -7,7 +7,7 @@ import { AdviceDisplay } from './AdviceDisplay';
 import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { debounce } from 'lodash';
-// import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
 import { Bot, Sparkles, BrainCircuit } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -73,6 +73,8 @@ export const AdvisorView = () => {
   const [analysisResults, setAnalysisResults] = useState<ViewpointAnalysisResult[] | null>(null);
   const [analysisSummary, setAnalysisSummary] = useState<string>('');
   const viewpointInputRef = useRef<HTMLTextAreaElement>(null);
+
+  const { toast } = useToast();
 
   // 当从服务器获取到三观数据时，更新状态
   useEffect(() => {
@@ -176,8 +178,43 @@ export const AdvisorView = () => {
   // 处理场景提交,获取AI建议
   const handleScenarioSubmit = async (scenario: string) => {
     if (!worldview && !lifeview && !values) {
-      // toast.error('请先填写您的三观信息');
+      toast({
+        title: "提示",
+        description: "请先填写您的三观信息",
+        variant: "destructive",
+      });
       return;
+    }
+
+    // 从本地存储获取模型信息
+    let modelId: string;
+    let apiKey: string | undefined;
+
+    
+    try {
+      // 获取选择的模型ID，如果没有则使用免费模型
+      modelId = localStorage.getItem('soul_pilot_selected_model_id') || 'deepseek-v3-free';
+      const provider = localStorage.getItem('soul_pilot_selected_provider') || 'free';
+      
+      // 检查是否是免费模型提供商
+      if (provider !== 'free') {
+        // 非免费模型，需要获取API Key
+        apiKey = localStorage.getItem(`soul_pilot_${provider}_key`) || undefined;
+        
+        // 如果没有API Key，提示用户并结束
+        if (!apiKey) {
+          toast({
+            title: "需要API密钥",
+            description: `使用${provider}服务需要提供API密钥，请在模型选择器中设置`,
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+    } catch (error) {
+      console.error('从本地存储获取模型信息失败:', error);
+      // 出错时使用默认免费模型
+      modelId = 'deepseek-v3-free';
     }
 
     setScenario(scenario);
@@ -193,6 +230,8 @@ export const AdvisorView = () => {
           values,
         },
         scenario,
+        modelId,
+        apiKey,
       });
 
       console.log('AI服务返回内容:', response);
@@ -209,7 +248,11 @@ export const AdvisorView = () => {
           actions: { points: [] },
           fullContent: `获取建议失败：${response.error || '未知错误'}`
         }));
-        // toast.error('获取建议失败，请重试');
+        toast({
+          title: "获取建议失败",
+          description: response.error || "服务器返回了错误响应",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error('获取AI建议失败:', error);
@@ -219,7 +262,11 @@ export const AdvisorView = () => {
         actions: { points: [] },
         fullContent: `获取建议失败：${error instanceof Error ? error.message : '未知错误'}`
       }));
-      // toast.error('获取建议失败，请重试');
+      toast({
+        title: "获取建议失败",
+        description: error instanceof Error ? error.message : "发生了未知错误",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }

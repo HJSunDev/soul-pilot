@@ -33,21 +33,67 @@ export const getAdvice = action({
       values: v.optional(v.string()),
     }),
     scenario: v.string(),
+    modelId: v.string(),
+    apiKey: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    // 获取API密钥
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      throw new Error("OpenAI API key not found in environment variables");
-    }
-
     try {
-      // 使用默认模型配置
-      const modelId = DEFAULT_MODEL_ID;
+      // 获取模型配置
+      const modelId = args.modelId || DEFAULT_MODEL_ID;
       const modelConfig = AVAILABLE_MODELS[modelId];
       
       if (!modelConfig) {
-        throw new Error(`未找到ID为 ${modelId} 的模型配置`);
+        return {
+          content: {
+            analysis: { points: [] },
+            actions: { points: [] },
+            fullContent: `未找到ID为 ${modelId} 的模型配置`,
+          },
+          error: `未找到ID为 ${modelId} 的模型配置`,
+          timestamp: new Date().toISOString(),
+          status: "error",
+          isStructured: false,
+        };
+      }
+
+      // 确定使用哪个 API Key
+      let apiKey: string;
+      
+      if (modelConfig.isFree) {
+        // 对于免费模型，使用环境变量中的 API Key
+        apiKey = process.env.OPENAI_API_KEY || '';
+        if (!apiKey) {
+          return {
+            content: {
+              analysis: { points: [] },
+              actions: { points: [] },
+              fullContent: "系统配置错误：未找到环境变量中的 API Key",
+            },
+            error: "系统配置错误：未找到环境变量中的 API Key",
+            timestamp: new Date().toISOString(),
+            status: "error",
+            isStructured: false,
+          };
+        }
+      } else {
+        // 对于付费模型，使用传入的 API Key
+        if (!args.apiKey) {
+          return {
+            content: {
+              analysis: { points: [] },
+              actions: { points: [] },
+              fullContent: "使用付费模型需要提供 API Key",
+            },
+            error: "使用付费模型需要提供 API Key",
+            timestamp: new Date().toISOString(),
+            status: "error",
+            isStructured: false,
+          };
+        }
+        apiKey = args.apiKey;
+
+        // 清理 API Key，移除可能的前后空格
+        apiKey = apiKey.trim();
       }
 
       // 创建结构化输出解析器

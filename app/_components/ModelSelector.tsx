@@ -409,8 +409,9 @@ export function ModelSelector({
                                (provider.id === 'siliconflow' && showSiliconFlowKey) ? 'text' : 'password'} 
                           value={apiKeys[provider.id] || ''}
                           onChange={(e) => handleApiKeyChange(provider.id, e.target.value)}
-                          placeholder="输入API Key后自动保存到本地"
+                          placeholder={provider.id === 'siliconflow' ? "暂不支持该服务商" : "输入API Key后自动保存到本地"}
                           className="w-full text-xs px-2 py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder:text-[10px]"
+                          disabled={provider.id === 'siliconflow'}
                         />
                         {apiKeys[provider.id] && (
                           <div className="absolute right-0 inset-y-0 flex items-center pr-2">
