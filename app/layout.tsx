@@ -7,6 +7,8 @@ import { ResponsiveProvider } from "@/components/providers/responsive-provider";
 import { AuthGuardProvider } from "@/components/providers/auth-guard-provider";
 import { Toaster } from "@/components/ui/toaster"
 
+// import { RemSizeDisplay } from "./components/rem-size-display";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -33,15 +35,16 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <ResponsiveProvider>
-          <ConvexClientProvider>
-            <AuthGuardProvider>
-              {children}
-            </AuthGuardProvider>
-          </ConvexClientProvider>
-        </ResponsiveProvider>
+        {/* 实时显示根元素字体大小 */}
+        {/* <RemSizeDisplay /> */}
+
+        <ConvexClientProvider>
+          <AuthGuardProvider>
+            {children}
+          </AuthGuardProvider>
+        </ConvexClientProvider>
         <Toaster />
       </body>
-    </html>
+    </html> 
   );
 }
