@@ -113,6 +113,16 @@ export const MODELS_BY_PROVIDER: Record<ProviderType, Record<string, ModelConfig
       description: "DeepSeek提供的免费对话模型，具备良好的理解能力和基础推理能力，适合日常对话和简单分析",
       isRecommended: false,
       isFree: true
+    },
+    "deepseek-v3-0324-free": {
+      modelName: "deepseek/deepseek-chat-v3-0324:free",
+      provider: "deepseek",
+      baseURL: "https://openrouter.ai/api/v1",
+      temperature: 0.5,
+      maxTokens: 3000,
+      description: "DeepSeek最新发布的免费对话模型，基于685B参数的mixture-of-experts架构，具有出色的推理能力和知识广度",
+      isRecommended: true,
+      isFree: true
     }
   }
 };
@@ -135,4 +145,4 @@ export function getAllModels(): Record<string, ModelConfig> {
 export const AVAILABLE_MODELS = getAllModels();
 
 // 默认模型ID
-export const DEFAULT_MODEL_ID = "deepseek-v3-free";
+export const DEFAULT_MODEL_ID = "deepseek-v3-0324-free";

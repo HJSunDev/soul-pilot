@@ -193,7 +193,7 @@ export const AdvisorView = () => {
     
     try {
       // 获取选择的模型ID，如果没有则使用免费模型
-      modelId = localStorage.getItem('soul_pilot_selected_model_id') || 'deepseek-v3-free';
+      modelId = localStorage.getItem('soul_pilot_selected_model_id') || 'deepseek-v3-0324-free';
       const provider = localStorage.getItem('soul_pilot_selected_provider') || 'free';
       
       // 检查是否是免费模型提供商
@@ -214,7 +214,7 @@ export const AdvisorView = () => {
     } catch (error) {
       console.error('从本地存储获取模型信息失败:', error);
       // 出错时使用默认免费模型
-      modelId = 'deepseek-v3-free';
+      modelId = 'deepseek-v3-0324-free';
     }
 
     setScenario(scenario);

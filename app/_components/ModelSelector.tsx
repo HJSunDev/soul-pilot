@@ -72,15 +72,15 @@ export function ModelSelector({
         } else {
           // 如果没有保存的模型，设置默认值
           setSelectedProvider('free');
-          setSelectedModelId('deepseek-v3-free');
-          setSelectedModel('deepseek/deepseek-chat:free');
+          setSelectedModelId('deepseek-v3-0324-free');
+          setSelectedModel('deepseek/deepseek-chat-v3-0324:free');
         }
       } catch (error) {
         console.error('无法从本地存储加载数据:', error);
         // 设置默认值
         setSelectedProvider('free');
-        setSelectedModelId('deepseek-v3-free');
-        setSelectedModel('deepseek/deepseek-chat:free');
+        setSelectedModelId('deepseek-v3-0324-free');
+        setSelectedModel('deepseek/deepseek-chat-v3-0324:free');
       }
     };
     
