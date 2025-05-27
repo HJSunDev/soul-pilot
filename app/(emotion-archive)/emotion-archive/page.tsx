@@ -76,7 +76,7 @@ export default function EmotionArchivePage() {
       {/* 开发中遮罩 */}
       <UnderDevelopment 
         moduleName="情绪档案" 
-        estimatedCompletion="2025年第二季度" 
+        estimatedCompletion="2025年第三季度" 
       />
       
       {/* 背景装饰 */}

@@ -50,7 +50,7 @@ const PersonalityModelingPage = () => {
       {/* 开发中遮罩 */}
       <UnderDevelopment 
         moduleName="人格建模" 
-        estimatedCompletion="2025年第二季度" 
+        estimatedCompletion="2025年第三季度" 
       />
       {/* 背景装饰 */}
       <div className="absolute top-0 right-0 w-[30rem] h-[30rem] bg-emerald-100/20 rounded-full blur-3xl pointer-events-none"></div>

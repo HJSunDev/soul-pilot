@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { debounce } from 'lodash';
@@ -124,21 +124,38 @@ export function ModelSelector({
     };
   }, [debouncedSave]);
 
-  // 模型提供商列表
-  const modelProviders: ModelProvider[] = [
+  // 排序模型的公用函数：推荐模型优先显示
+  const sortModelsByRecommendation = useCallback((models: Record<string, any>) => {
+    const entries = Object.entries(models || {});
+    
+    // 按推荐状态排序：推荐的模型优先显示
+    const sortedEntries = entries.sort(([idA, configA], [idB, configB]) => {
+      // 如果A是推荐的，B不是，A排在前面
+      if (configA.isRecommended && !configB.isRecommended) return -1;
+      // 如果B是推荐的，A不是，B排在前面
+      if (!configA.isRecommended && configB.isRecommended) return 1;
+      // 如果都是推荐或都不是推荐，保持原有顺序
+      return 0;
+    });
+    
+    return sortedEntries.map(([id, config]) => ({
+      id,
+      name: config.modelName,
+      description: config.description,
+      isRecommended: config.isRecommended,
+      isFree: config.isFree
+    }));
+  }, []);
+
+    // 使用 useMemo 缓存模型提供商列表，避免不必要的重新计算
+  const modelProviders: ModelProvider[] = useMemo(() => [
     {
       id: 'openrouter',
       name: 'OpenRouter',
       needsKey: true,
       apiKey: apiKeys.openrouter || '••••••••••••••••',
       website: 'https://openrouter.ai',
-      models: modelsByProvider ? Object.entries(modelsByProvider.openrouter || {}).map(([id, config]) => ({
-        id,
-        name: config.modelName,
-        description: config.description,
-        isRecommended: config.isRecommended,
-        isFree: config.isFree
-      })) : []
+      models: modelsByProvider ? sortModelsByRecommendation(modelsByProvider.openrouter) : []
     },
     {
       id: 'siliconflow',
@@ -146,27 +163,15 @@ export function ModelSelector({
       needsKey: true,
       apiKey: apiKeys.siliconflow || '••••••••••••••••',
       website: 'https://www.siliconflow.cn',
-      models: modelsByProvider ? Object.entries(modelsByProvider.siliconflow || {}).map(([id, config]) => ({
-        id,
-        name: config.modelName,
-        description: config.description,
-        isRecommended: config.isRecommended,
-        isFree: config.isFree
-      })) : []
+      models: modelsByProvider ? sortModelsByRecommendation(modelsByProvider.siliconflow) : []
     },
     {
       id: 'free',
       name: '免费模型',
       needsKey: false,
-      models: modelsByProvider ? Object.entries(modelsByProvider.free || {}).map(([id, config]) => ({
-        id,
-        name: config.modelName,
-        description: config.description,
-        isRecommended: config.isRecommended,
-        isFree: config.isFree
-      })) : []
+      models: modelsByProvider ? sortModelsByRecommendation(modelsByProvider.free) : []
     }
-  ];
+  ], [modelsByProvider, apiKeys, sortModelsByRecommendation]);
 
   // 根据主题获取对应的颜色配置
   const themeColors = {

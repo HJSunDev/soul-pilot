@@ -17,6 +17,16 @@ export type ProviderType = 'openrouter' | 'siliconflow' | 'free';
 export const MODELS_BY_PROVIDER: Record<ProviderType, Record<string, ModelConfig>> = {
   // OpenRouter服务商的模型
   openrouter: {
+    "claude-sonnet-4": {
+      modelName: "anthropic/claude-sonnet-4",
+      provider: "anthropic",
+      baseURL: "https://openrouter.ai/api/v1",
+      temperature: 0.5,
+      maxTokens: 8000,
+      description: "Anthropic最新的旗舰模型Claude Sonnet 4，具备卓越的推理能力、创造性和准确性，在复杂任务处理和深度分析方面表现出色",
+      isRecommended: true,
+      isFree: false
+    },
     "gpt-3.5-turbo": {
       modelName: "gpt-3.5-turbo",
       provider: "openai",
@@ -44,7 +54,7 @@ export const MODELS_BY_PROVIDER: Record<ProviderType, Record<string, ModelConfig
       temperature: 0.5,
       maxTokens: 4000,
       description: "Anthropic最新的中型模型，提供卓越的推理和理解能力，擅长精确、有条理的回应",
-      isRecommended: true,
+      isRecommended: false,
       isFree: false
     },
     "claude-3.5-sonnet": {
